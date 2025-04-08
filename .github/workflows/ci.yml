@@ -22,6 +22,9 @@ jobs:
       - name: Deploy frontend on remote server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            echo "____Switching to project directory____"
+            cd ~/ss-frontend
+          
             echo "____Pulling latest changes____"
             git pull origin main
 
