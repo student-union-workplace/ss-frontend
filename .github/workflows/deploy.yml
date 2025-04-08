@@ -1,0 +1,44 @@
+name: Deploy Frontend to VM
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.VM_SSH_KEY }}
+
+      - name: Deploy frontend on remote server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            echo "____Pulling latest changes____"
+            git pull origin main
+
+            echo "____Setting up environment____"
+            export NVM_DIR="$HOME/.nvm"
+            source "$NVM_DIR/nvm.sh"
+            nvm use 20.15.1
+
+            echo "____Frontend: installing and building____"
+            npm install
+            npm run build
+
+            echo "____Stopping old frontend (if running)____"
+            pm2 delete frontend || true
+          
+            echo "____Starting frontend on port 3000____"
+            pm2 start "npm run preview -- --host --port 3000" --name frontend
+
+            echo "✅ Frontend deployment finished"
+          EOF
