@@ -4,22 +4,30 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import multiMonthPlugin from '@fullcalendar/multimonth'
 import {useQuery} from "react-query";
 import {EventsApi} from "../../../api/events";
-import { useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import {EventData} from "../../../types/events";
 import {ActivitiesApi} from "../../../api/activities";
 import './style.css'
 import {RoutesName} from "../../../enums/routes";
 import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
-import {Role} from "../../../enums/roles";
+
 type CalendarProps = {
-    open: boolean;
-    setOpen: (open: boolean) => void;
+    openActivity: boolean;
+    setOpenActivity: (open: boolean) => void;
+    openAddActivity: boolean;
+    setOpenAddActivity: (open: boolean) => void;
     idActivity?: string | null;
     setIdActivity: (idActivity: string | null) => void;
 }
 
-export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
+export const Calendar = ({ setOpenActivity, setOpenAddActivity, setIdActivity}: CalendarProps) => {
     const role = DecodedJwt()?.role;
+
+    const addButton = document.querySelector('.fc-addActivity-button')
+    if (addButton) {
+        addButton.style.display ='none'
+    }
+
     const { data: events, isLoading: isLoadingEvents } = useQuery(
         ['events'],
         () => EventsApi.get({page: 1, take: 10000}),
@@ -48,6 +56,14 @@ export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
 
     const isLoading = isLoadingEvents || isLoadingActivities
 
+    useEffect(() => {
+        console.log(role)
+        const addButton = document.querySelector('.fc-addActivity-button')
+        if (addButton) {
+            addButton.style.display ='none'
+        }
+    }, [role]);
+
     return (!isLoading && <FullCalendar
         plugins={[ dayGridPlugin, timeGridPlugin, multiMonthPlugin ]}
         initialView="dayGridMonth"
@@ -65,10 +81,8 @@ export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
         initialEvents={INITIAL_EVENTS}
         eventClick={(info) => {
             if (info.event.extendedProps.type === 'activity') {
-                if (role !== Role.Old ) {
-                    setOpen(true);
-                    setIdActivity(info.event.id)
-                }
+                setOpenActivity(true);
+                setIdActivity(info.event.id)
 
             } else {
                 window.open(`${RoutesName.Event}${info.event.id}`, '_blank')
@@ -86,7 +100,7 @@ export const Calendar = ({ setOpen, setIdActivity}: CalendarProps) => {
         customButtons={{
             addActivity: {
                 text: 'Добавить событие',
-                click: () => setOpen(true),
+                click: () => setOpenAddActivity(true),
             }
         }}
         headerToolbar={{

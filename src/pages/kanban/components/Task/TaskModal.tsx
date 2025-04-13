@@ -35,9 +35,8 @@ type TaskModalProps = {
 export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
     const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
     const [realTask, setRealTask] = useState(task)
-    const labelChip = realTask?.user?.name.split(' ')[0] + ' ' + realTask?.user?.name.split(' ')[1]
-    const labelAvatar = realTask?.user?.name?.split(' ')[0]?.split('')[0] + realTask?.user?.name.split(' ')[1].split('')[0]
-
+    const labelChip = realTask?.user?.name?.split(' ')?.[0] + ' ' + (realTask?.user?.name?.split(' ')?.[1] ?? '')
+    const labelAvatar = realTask?.user?.name?.split(' ')[0]?.split('')?.[0] + (realTask?.user?.name?.split(' ')?.[1]?.split('')?.[0] ?? '')
 
     const handleClose = () => {
         setOpen(false)

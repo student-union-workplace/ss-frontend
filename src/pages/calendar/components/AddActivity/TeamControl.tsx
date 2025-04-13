@@ -36,13 +36,14 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
             return;
         }
 
-        value = newValue.map(user => user.id);
+
         onChange(newValue);
     };
 
     const handleDelete = (id: string) => {
-        value = value?.filter((value) => value !== id)
-        onChange(value)
+        const newValue = value?.filter((value) => value.id !== id)
+        console.log(value)
+        onChange(newValue)
     }
 
     return (
