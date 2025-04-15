@@ -4,7 +4,7 @@ import {useForm} from "react-hook-form";
 import {CustomControl} from "../../../../components/controls/CustomControl";
 import {DateControl} from "./DateControl.tsx";
 import Button from "@mui/material/Button";
-import { useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import { ActivityFormValues} from "../../../../types/activities";
 import {ADD_ACTIVITY_INITIAL_VALUE} from "./constants.ts";
@@ -14,8 +14,8 @@ import {LocationsApi} from "../../../../api/locations";
 import {LocationData} from "../../../../types/locations";
 import {ActivitiesApi} from "../../../../api/activities";
 import {UserData} from "../../../../types/users";
-import {DecodedJwt} from "../../../../utils/jwt/DecodedJwt.tsx";
 import {Role} from "../../../../enums/roles";
+import {DecodedJwt} from "../../../../utils/jwt/DecodedJwt.tsx";
 
 const style = {
     position: 'absolute',
@@ -36,6 +36,7 @@ type AddActivityModal = {
     open: boolean;
     setOpen: (open: boolean) => void;
     idActivity?: string | null;
+    setIdActivity: (id: string | null) => void;
 }
 
 export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) => {
@@ -55,7 +56,11 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
         defaultValues: ADD_ACTIVITY_INITIAL_VALUE,
     });
 
-    const { isLoading } = useQuery(['activity', idActivity], () => ActivitiesApi.getActivity({id: idActivity as string}), {
+    useEffect(() => {
+        reset({})
+    }, [idActivity, reset]);
+
+    const { isLoading } = useQuery(['activity', idActivity, open], () => ActivitiesApi.getActivity({id: idActivity as string}), {
         onSuccess: res => {
             {
                 reset({})
@@ -74,15 +79,15 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
 
     const createMutation = useMutation(ActivitiesApi.create, {
         onSuccess: () => {
-            queryClient.invalidateQueries('activities');
-            queryClient.removeQueries('activities');
+            queryClient.invalidateQueries('activity');
+            queryClient.removeQueries('activity');
         }
     });
 
     const updateMutation = useMutation(ActivitiesApi.update, {
         onSuccess: () => {
-            queryClient.invalidateQueries('activities');
-            queryClient.removeQueries('activities');
+            queryClient.invalidateQueries('activity');
+            queryClient.removeQueries('activity');
         }
     });
 
@@ -101,7 +106,7 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
     const createHandler = async (values: ActivityFormValues) => {
         try {
             if (idActivity) {
-                const response = await updateMutation.mutateAsync({
+                await updateMutation.mutateAsync({
                     id: idActivity,
                     data: {
                         name: values.name,
@@ -112,12 +117,10 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                     }
                 });
 
-                if (response.status === 200) {
-                    setOpen(false)
-                    reset({})
-                }
+                reset({})
+                setOpen(false)
             } else {
-                const response = await createMutation.mutateAsync({
+                await createMutation.mutateAsync({
                     name: values.name,
                     description: values.description,
                     date: values.date,
@@ -125,10 +128,8 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                     location_id: values.location_id,
                 });
 
-                if (response.status === 201) {
-                    setOpen(false)
-                    reset({})
-                }
+                reset({})
+                setOpen(false)
             }
 
         } catch (error) {

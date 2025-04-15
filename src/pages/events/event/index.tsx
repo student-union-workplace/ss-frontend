@@ -251,9 +251,9 @@ export const Event = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
             }}>
-                <Switch checked={watch('is_archived')}
-                        onChange={() => changeStatusHandler()}/>
-                <Typography>{watch('is_archived') ? 'Завершено' : 'В работе'}</Typography>
+                {role !== Role.Old && <Switch checked={watch('is_archived')}
+                         onChange={() => changeStatusHandler()}/>}
+                <Typography sx={{marginLeft: '1rem'}}>{watch('is_archived') ? 'Завершено' : 'В работе'}</Typography>
             </Box>
 
         </Box>
@@ -351,9 +351,9 @@ export const Event = () => {
                 <Box>
                     <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Рабочие документы</Typography>
-                        <IconButton size={'small'} color={'primary'} onClick={() => setOpenAddDocumentModal(true)}>
+                        {role !== Role.Old && <IconButton size={'small'} color={'primary'} onClick={() => setOpenAddDocumentModal(true)}>
                             <AddIcon/>
-                        </IconButton>
+                        </IconButton>}
                     </Box>
 
                     <Box sx={{

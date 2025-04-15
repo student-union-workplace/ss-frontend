@@ -15,8 +15,8 @@ type EventProps = {
 }
 
 export const Task = ({item, color}: EventProps) => {
-    const labelChip = item?.user?.name.split(' ')[0] + ' ' + item?.user?.name.split(' ')[1].split('')[0] + '.'
-    const labelAvatar = item?.user?.name.split(' ')[0].split('')[0] + item?.user?.name.split(' ')[1].split('')[0]
+    const labelChip = item?.user?.name?.split(' ')[0] + ' ' + (item?.user?.name?.split(' ')?.[1]?.split('')?.[0] ?? '') + '.'
+    const labelAvatar = item?.user?.name?.split(' ')[0]?.split('')[0] + (item?.user?.name?.split(' ')?.[1]?.split('')?.[0] ?? '')
     const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
     const [openTaskModal, setOpenTaskModal] = useState(false)
 
