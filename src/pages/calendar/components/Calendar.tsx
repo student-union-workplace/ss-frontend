@@ -4,12 +4,11 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import multiMonthPlugin from '@fullcalendar/multimonth'
 import {useQuery} from "react-query";
 import {EventsApi} from "../../../api/events";
-import {useEffect, useMemo} from "react";
+import { useMemo} from "react";
 import {EventData} from "../../../types/events";
 import {ActivitiesApi} from "../../../api/activities";
 import './style.css'
 import {RoutesName} from "../../../enums/routes";
-import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
 
 type CalendarProps = {
     openActivity: boolean;
@@ -21,12 +20,11 @@ type CalendarProps = {
 }
 
 export const Calendar = ({ setOpenActivity, setOpenAddActivity, setIdActivity}: CalendarProps) => {
-    const role = DecodedJwt()?.role;
 
-    const addButton = document.querySelector('.fc-addActivity-button')
+    /*const addButton = document.querySelector('.fc-addActivity-button')
     if (addButton) {
         addButton.style.display ='none'
-    }
+    }*/
 
     const { data: events, isLoading: isLoadingEvents } = useQuery(
         ['events'],
@@ -56,13 +54,13 @@ export const Calendar = ({ setOpenActivity, setOpenAddActivity, setIdActivity}: 
 
     const isLoading = isLoadingEvents || isLoadingActivities
 
-    useEffect(() => {
+    /*useEffect(() => {
         console.log(role)
         const addButton = document.querySelector('.fc-addActivity-button')
         if (addButton) {
             addButton.style.display ='none'
         }
-    }, [role]);
+    }, [role]);*/
 
     return (!isLoading && <FullCalendar
         plugins={[ dayGridPlugin, timeGridPlugin, multiMonthPlugin ]}
