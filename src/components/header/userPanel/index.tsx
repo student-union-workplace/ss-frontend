@@ -2,18 +2,23 @@ import {Avatar, Badge, Box, IconButton, Typography} from "@mui/material";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import {Notifications} from "../notifications";
 import {useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {RoutesName} from "../../../enums/routes";
 import {useQuery} from "react-query";
 import {NotificationsApi} from "../../../api/notifications";
+import {UserPopover} from "./components/UserPopover.tsx";
 
 export const UserPanel = () => {
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const open = Boolean(anchorEl);
-    const nav = useNavigate()
+    const [anchorElNotifications, setAnchorElNotifications] = useState<HTMLButtonElement | null>(null);
+    const openNotifications = Boolean(anchorElNotifications);
+    const [anchorElUserPopover, setAnchorElUserPopover] = useState<HTMLButtonElement | null>(null);
+    const openUserPopover = Boolean(anchorElUserPopover);
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+
+    const handleClickNotifications = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorElNotifications(event.currentTarget);
+    };
+
+    const handleClickUserPopover = (event: React.MouseEvent<HTMLDivElement, MouseEvent> ) => {
+        setAnchorElUserPopover(event.currentTarget);
     };
 
     const { data: notificationsData, isLoading } = useQuery(
@@ -25,17 +30,17 @@ export const UserPanel = () => {
     return (
         <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '15px', position: 'relative'}}>
             <Badge badgeContent={!isLoading && notificationsData?.data?.length?.toString()} color="error" overlap="circular">
-                <IconButton onClick={handleClick} color={'inherit'}>
+                <IconButton onClick={handleClickNotifications} color={'inherit'}>
                     <NotificationsNoneIcon fontSize={'large'}/>
                 </IconButton>
             </Badge>
             <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '7px'}}>
-
                 <Avatar sx={{bgcolor: '#1DB8CA', width: '35px', height: '35px', cursor: 'pointer'}}
-                        onClick={() => nav(`${RoutesName.User}1`)}>РГ</Avatar>
+                        onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent> ) => handleClickUserPopover(event)}>РГ</Avatar>
                 <Typography variant={'body2'} sx={{fontSize: '24px'}}>Рома Г.</Typography>
             </Box>
-            <Notifications open={open} anchorEl={anchorEl} setAnchorEl={setAnchorEl}/>
+            <Notifications open={openNotifications} anchorEl={anchorElNotifications} setAnchorEl={setAnchorElNotifications}/>
+            <UserPopover anchorEl={anchorElUserPopover} setAnchorEl={setAnchorElUserPopover} open={openUserPopover} />
         </Box>
     )
 }

@@ -1,3 +1,8 @@
+import {Box} from "@mui/material";
+import {Profile} from "./components/Profile.tsx";
+
 export const UserPage = () => {
-    return <p>Это пользователь один</p>
+    return <Box className={'content'}>
+        <Profile />
+    </Box>;
 }

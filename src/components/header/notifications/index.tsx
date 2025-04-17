@@ -38,5 +38,5 @@ export const Notifications = ({setAnchorEl, open, anchorEl}: NotificationsProps)
             </Box>}
         </Popover>
 
-    )
+    );
 }
