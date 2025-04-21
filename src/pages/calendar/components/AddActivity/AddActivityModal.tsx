@@ -87,7 +87,9 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
     const updateMutation = useMutation(ActivitiesApi.update, {
         onSuccess: () => {
             queryClient.invalidateQueries('activity');
-            queryClient.removeQueries('activity');
+            /*queryClient.removeQueries('activity');*/
+            queryClient.invalidateQueries('activities');
+            /*queryClient.removeQueries('activities');*/
         }
     });
 

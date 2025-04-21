@@ -85,7 +85,7 @@ export const Events = () => {
     }, [])
 
     return (
-        <Box className={'content'} sx={{marginInline: '150px'}}>
+        <Box className={'content'} sx={{marginInline: '8%'}}>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',

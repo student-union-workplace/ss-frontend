@@ -16,6 +16,11 @@ export const UserPopover = ({setAnchorEl, open, anchorEl}: UserPopoverProps) => 
     };
     const nav = useNavigate()
 
+    const logout = () => {
+        localStorage.removeItem('token');
+        nav('/login')
+    }
+
     return (<Popover
             id={id}
             open={open}
@@ -27,13 +32,13 @@ export const UserPopover = ({setAnchorEl, open, anchorEl}: UserPopoverProps) => 
             anchorEl={anchorEl}
         >
             <Box sx={{display: 'flex', flexDirection: 'column', padding: '0.5rem'}}>
-                <Box sx={{display: 'flex', flexDirection: 'row'}} onClick={() => nav(`${RoutesName.User}1`)}>
+                <Box sx={{display: 'flex', flexDirection: 'row', cursor: 'pointer'}} onClick={() => nav(`${RoutesName.User}1`)}>
                     <AccountCircleIcon />
                     <Typography>Мой профиль</Typography>
                 </Box>
                 <Divider orientation="horizontal" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px', borderColor: '#1FD4E9', marginBlock: '0.5rem'}}/>
-                <Box sx={{display: 'flex', flexDirection: 'row'}}>
+                <Box sx={{display: 'flex', flexDirection: 'row', cursor: 'pointer'}} onClick={logout}>
                     <LogoutIcon />
                     <Typography>Выйти</Typography>
                 </Box>

@@ -52,7 +52,7 @@ export const ActivityModal = ({open, setOpen, id, setIdActivity}: ActivityModalP
     });
 
     return (
-        <Modal open={open} onClose={handleClose} key={data?.data?.id} disableEnforceFocus>
+        <Modal open={open} onClose={handleClose} key={id} disableEnforceFocus>
             {isLoading ? <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <CircularProgress/>
             </Box> : <Box sx={style}>
