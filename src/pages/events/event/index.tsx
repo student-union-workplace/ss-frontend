@@ -284,7 +284,7 @@ export const Event = () => {
                 </Box>}
                 <Box>
                     <Typography variant={'subtitle2'} color={'textSecondary'}>Канбан-доска</Typography>
-                    <Button variant={'contained'} size={'small'} color={'primary'}>Перейти</Button>
+                    <Button variant={'contained'} size={'small'} color={'primary'} onClick={() => nav(`${RoutesName.Kanban}?name=${watch('name')}`)}>Перейти</Button>
                 </Box>
                 {isEditLastEvent && role !== Role.Old  ?
                     <AutocompleteInput name={'past_event_id'} label={'Прошлогоднее мероприятие'} control={control}
@@ -329,7 +329,7 @@ export const Event = () => {
                     onBlur={() => updateDateHandler()}
                 /> : <Box>
                     <Typography variant={'subtitle2'} color={'textSecondary'}>Дата и время проведения</Typography>
-                    <Typography variant={'h6'} onDoubleClick={() => setIsEditDate(true)}>{format(watch('date'), 'dd.MM.yyyy HH:mm')}</Typography>
+                    <Typography variant={'h6'} onDoubleClick={() => setIsEditDate(true)}>{watch('date') ? format(watch('date'), 'dd.MM.yyyy HH:mm') : '-'}</Typography>
                 </Box>}
                 {isEditPlace && role !== Role.Old ? <CustomControl
                         name={'locations'}

@@ -1,6 +1,6 @@
 import {Box, Divider, FormControlLabel, IconButton, TextField, Typography} from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import { useState} from "react";
+import {useEffect, useState} from "react";
 import Checkbox from "@mui/material/Checkbox";
 import FilterListIcon from '@mui/icons-material/FilterList';
 import Button from "@mui/material/Button";
@@ -11,6 +11,7 @@ import {useQuery} from "react-query";
 import {TasksApi} from "../../api/tasks";
 import {TaskData} from "../../types/tasks";
 import {EventsApi} from "../../api/events";
+import {useSearchParams} from "react-router-dom";
 
 export const KanbanPage = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -19,6 +20,9 @@ export const KanbanPage = () => {
     const [isMine, setIsMine] = useState(false)
     const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
     const open = Boolean(anchorEl);
+    const [searchParams] = useSearchParams();
+    const name = searchParams.get('name');
+    console.log(name);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -34,6 +38,12 @@ export const KanbanPage = () => {
         () => TasksApi.get({event_name: eventName, user_name: userName, is_mine: isMine}),
         { refetchOnWindowFocus: false }
     )
+
+    useEffect(() => {
+        if (name) {
+            setEventName(name);
+        }
+    }, [name])
 
     return (
         <Box className={'content'}
