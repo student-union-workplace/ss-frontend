@@ -46,7 +46,7 @@ export const AddEvent = () => {
         ]
     }, [])
 
-    const creatwMutation = useMutation(EventsApi.create, {
+    const createMutation = useMutation(EventsApi.create, {
         onSuccess: () => {
             queryClient.invalidateQueries('events');
         }
@@ -54,7 +54,7 @@ export const AddEvent = () => {
 
     const createHandler = async (values: EventFormValues) => {
         try {
-            const response = await creatwMutation.mutateAsync({
+            const response = await createMutation.mutateAsync({
                 name: values.name,
                 date: values.date,
                 locations: values.locations.map(location => location.id),

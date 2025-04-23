@@ -3,6 +3,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {RoutesName} from "../../../../enums/routes";
 import {useNavigate} from "react-router-dom";
+import {DecodedJwt} from "../../../../utils/jwt/DecodedJwt.tsx";
 
 type UserPopoverProps = {
     anchorEl: HTMLButtonElement | null;
@@ -11,6 +12,7 @@ type UserPopoverProps = {
 }
 export const UserPopover = ({setAnchorEl, open, anchorEl}: UserPopoverProps) => {
     const id = open ? 'user-popover' : undefined;
+    const idUser = DecodedJwt()?.id;
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -32,7 +34,7 @@ export const UserPopover = ({setAnchorEl, open, anchorEl}: UserPopoverProps) => 
             anchorEl={anchorEl}
         >
             <Box sx={{display: 'flex', flexDirection: 'column', padding: '0.5rem'}}>
-                <Box sx={{display: 'flex', flexDirection: 'row', cursor: 'pointer'}} onClick={() => nav(`${RoutesName.User}1`)}>
+                <Box sx={{display: 'flex', flexDirection: 'row', cursor: 'pointer'}} onClick={() => nav(`${RoutesName.User}${idUser}`)}>
                     <AccountCircleIcon />
                     <Typography>Мой профиль</Typography>
                 </Box>
