@@ -22,7 +22,8 @@ export const KanbanPage = () => {
     const open = Boolean(anchorEl);
     const [searchParams] = useSearchParams();
     const name = searchParams.get('name');
-    console.log(name);
+    const userIdParams = searchParams.get('userId');
+    const [userId, setUserId] = useState(null)
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -35,7 +36,7 @@ export const KanbanPage = () => {
 
     const { data: tasks } = useQuery(
         ['tasks', eventName, userName, isMine],
-        () => TasksApi.get({event_name: eventName, user_name: userName, is_mine: isMine}),
+        () => TasksApi.get({event_name: eventName, user_name: userName, is_mine: isMine, user_id: userId}),
         { refetchOnWindowFocus: false }
     )
 
@@ -43,7 +44,10 @@ export const KanbanPage = () => {
         if (name) {
             setEventName(name);
         }
-    }, [name])
+        if (userIdParams) {
+            setUserId(userIdParams)
+        }
+    }, [name, userIdParams])
 
     return (
         <Box className={'content'}

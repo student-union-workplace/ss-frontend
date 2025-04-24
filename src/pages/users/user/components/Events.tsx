@@ -40,7 +40,7 @@ export const Events = () => {
                     <Tab label="Текущие мероприятия" value='current'/>
                     <Tab label="Прошедшие мероприятия" value='archived'/>
                 </Tabs>
-                <TableContainer sx={{maxHeight: '80%',
+                <TableContainer sx={{maxHeight: '80%', marginTop: '1rem',
                     overflowY: 'auto',}}>
                     <Table stickyHeader aria-label="sticky table" size="small">
                         <TableBody>

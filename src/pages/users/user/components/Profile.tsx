@@ -100,8 +100,8 @@ export const Profile = () => {
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                         <Avatar sx={{bgcolor: '#1DB8CA', width: '150px', height: '150px', cursor: 'pointer'}}>РГ</Avatar>
                         <Button variant={'contained'} color={'primary'} size={'small'}>Загрузить фото</Button>
-                        <Button variant={'contained'} color={'primary'} size={'small'} onClick={() => setIsEdit(true)}>Изменить
-                            данные</Button>
+                        <Button variant={'contained'} color={'primary'} size={'small'} onClick={() => setIsEdit(!isEdit)}>
+                            {isEdit ? 'Отменить' : 'Изменить данные'}</Button>
                     </Box>
                     {isEdit ? <form onSubmit={handleSubmit(editHandler)}
                                     style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '70%'}}>

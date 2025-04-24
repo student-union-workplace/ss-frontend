@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Box, Chip, Collapse, Table, TableBody, TableCell, TableRow, Typography} from "@mui/material";
+import {Box, Chip, CircularProgress, Collapse, Table, TableBody, TableCell, TableRow, Typography} from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import * as fns from "date-fns";
@@ -11,6 +11,7 @@ import {useQuery} from "react-query";
 import {TasksApi} from "../../../../api/tasks";
 import {getStatus, getStatusColor} from "../../../kanban/utils.ts";
 import {TaskData} from "../../../../types/tasks";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 export type RowEventProps = {
     row: EventData;
@@ -22,20 +23,21 @@ export const RowEvent = ({row}: RowEventProps) => {
     const id = params.id!;
     const [open, setOpen] = useState(false);
 
-    const {data: tasks} = useQuery(
-        ['tasks', row.name],
+    const {data: tasks, isLoading} = useQuery(
+        ['tasks', row.id],
         () => TasksApi.get({user_id: id, event_name: row.name}),
         {refetchOnWindowFocus: false}
     );
 
+    console.log(tasks?.data);
     return (<>
             <TableRow hover role="checkbox" tabIndex={-1} key={row.name} sx={{
                 "& .MuiTableRow-root:hover": {
                     backgroundColor: "primary.light"
                 },
             }}>
-                <TableCell align={'left'}>
-                    {open ? <KeyboardArrowUpIcon onClick={() => setOpen(!open)}/> : <KeyboardArrowDownIcon onClick={() => setOpen(!open)}/>}
+                <TableCell align={'left'} >
+                    {open ? <KeyboardArrowUpIcon sx={{cursor: 'pointer'}} onClick={() => setOpen(!open)}/> : <KeyboardArrowDownIcon sx={{cursor: 'pointer'}} onClick={() => setOpen(!open)}/>}
                 </TableCell>
                 <TableCell align={'left'}><Typography
                     variant={'subtitle1'}>{row?.date ? fns.format(row.date, 'd.LL.yyyy', {locale: ru}) : '-'}</Typography>
@@ -51,6 +53,7 @@ export const RowEvent = ({row}: RowEventProps) => {
                         <Typography
                             variant={'subtitle1'}>{row.name}
                         </Typography>
+                        <OpenInNewIcon fontSize={'small'}/>
 
                     </Box>
                 </TableCell>
@@ -75,24 +78,39 @@ export const RowEvent = ({row}: RowEventProps) => {
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
                             <Table size="small" aria-label="purchases">
-                                <TableBody>
-                                    {tasks?.data?.map((row: TaskData) => {
-                                        return (<TableRow key={row.name}>
+                                {isLoading ? <CircularProgress /> : <TableBody>
+                                    {tasks?.data?.map((task: TaskData) => {
+                                        return (<TableRow key={task.name}>
                                             <TableCell component="th" scope="row">
-                                                {row.name}
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    gap: '3px',
+                                                    cursor: 'pointer'
+                                                }}
+                                                     onClick={() => nav(`${RoutesName.Kanban}?name=${row.name}&userId=${id}`)}>
+                                                    <Typography
+                                                        variant={'subtitle1'}>{task.name}
+                                                    </Typography>
+                                                    <OpenInNewIcon fontSize={'small'}/>
+                                                </Box>
                                             </TableCell>
                                             <TableCell>
                                                 <Chip
                                                     variant={'outlined'}
-                                                    label={getStatus(row?.status ?? 'open')}
-                                                    sx={{ borderColor: getStatusColor(row?.status ?? 'open'),
-                                                        color: getStatusColor(row?.status ?? 'open')}}
+                                                    label={getStatus(task?.status ?? 'open')}
+                                                    sx={{
+                                                        borderColor: getStatusColor(task?.status ?? 'open'),
+                                                        color: getStatusColor(task?.status ?? 'open')
+                                                    }}
                                                     size={'small'}
                                                 />
                                             </TableCell>
-                                        </TableRow>);
+                                        </TableRow>)
                                     })}
-                                </TableBody>
+                                    {(tasks?.data?.length === 0) && <Typography>У пользователя нет задач в данном мероприятии</Typography>}
+                                </TableBody>}
                             </Table>
                         </Box>
                     </Collapse>

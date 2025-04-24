@@ -39,10 +39,8 @@ export const UserPanel = () => {
                     <NotificationsNoneIcon fontSize={'large'}/>
                 </IconButton>
             </Badge>
-            <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '7px'}}>
-                <Avatar sx={{bgcolor: '#1DB8CA', width: '35px', height: '35px', cursor: 'pointer'}}
-                        onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => handleClickUserPopover(event)}
-                >
+            <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '7px', cursor: 'pointer'}} onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => handleClickUserPopover(event)}>
+                <Avatar sx={{bgcolor: '#1DB8CA', width: '35px', height: '35px', }}>
                     {labelAvatar}
                 </Avatar>
                 <Typography variant={'body2'} sx={{fontSize: '24px'}}>{labelName}</Typography>
