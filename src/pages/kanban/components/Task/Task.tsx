@@ -30,7 +30,6 @@ export const Task = ({item, color}: EventProps) => {
         setOpenTaskModal(true)
     };
 
-
     return (
         <Paper
             variant={'outlined'}

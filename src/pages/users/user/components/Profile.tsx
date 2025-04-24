@@ -11,10 +11,13 @@ import {TextInput} from "../../../../components/controls/TextInput.tsx";
 import {AutocompleteInput} from "../../../../components/controls/AutocompleteInput.tsx";
 import {DepartmentsApi} from "../../../../api/departments";
 import {Role} from "../../../../enums/roles";
+import {useParams} from "react-router-dom";
 
 export const Profile = () => {
     const queryClient = useQueryClient();
-    const id = DecodedJwt()?.id;
+    const idJwt = DecodedJwt()!.id;
+    const params = useParams();
+    const idParams = params.id!;
     const [isEdit, setIsEdit] = useState(false);
     const {control, handleSubmit, reset} = useForm<UserFormValues>({
         defaultValues: EDIT_USER_INITIAL_VALUE,
@@ -22,7 +25,7 @@ export const Profile = () => {
 
     const {data: userData, isLoading} = useQuery(
         'user',
-        () => UsersApi.getUser({id: id}),
+        () => UsersApi.getUser({id: idParams}),
         {
             onSuccess: (res) => {
                 reset({
@@ -43,19 +46,19 @@ export const Profile = () => {
 
     const editMutation = useMutation(UsersApi.update, {
         onSuccess: () => {
-            queryClient.invalidateQueries('users');
+            queryClient.invalidateQueries('user');
         }
     });
     const editHandler = async (values: UserFormValues) => {
         try {
             const response = await editMutation.mutateAsync({
-                id: id,
+                id: idParams,
                 data: {
                     name: values?.name,
                     email: values?.email,
-                    phone_number: values?.phone_number,
-                    vk_link: values?.vk_link,
-                    tg_link: values?.tg_link,
+                    phone_number: values?.phone_number?.length ? values?.phone_number : null,
+                    vk_link: values?.vk_link?.length ? values?.vk_link : null,
+                    tg_link: values?.tg_link?.length ? values?.tg_link : null,
                     department_id: values?.department_id,
                     role: values?.role,
                 }
@@ -76,12 +79,20 @@ export const Profile = () => {
     }, [departments]);
 
     const rolesOptions = useMemo(() => {
-        return [{label: 'Заместитель', value: Role.Admin},{label: 'Член комиссии', value: Role.Member}]
+        return [{label: 'Заместитель', value: Role.Admin},{label: 'Член комиссии', value: Role.Member},{label: 'Песок', value: Role.Old}]
     }, []);
+
+    const getRole = (role: Role) => {
+        switch (role) {
+            case Role.Admin: return 'Заместитель';
+            case Role.Member: return 'Член комиссии';
+            case Role.Old: return 'Песок'
+        }
+    }
 
     return (
         <Box sx={{width :'100%'}}>
-            <Typography sx={{textAlign: 'center', paddingBottom: '1rem'}} variant={'h5'}>Мой профиль</Typography>
+            <Typography sx={{textAlign: 'center', paddingBottom: '2rem'}} variant={'h5'}>{idJwt === idParams ? 'Мой профиль' : 'Профиль'}</Typography>
             {isLoading ? <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <CircularProgress/>
             </Box> :
@@ -147,7 +158,7 @@ export const Profile = () => {
                             <Box sx={{display: 'flex', flexDirection: 'column'}}>
                                 <Box sx={{display: 'flex', flexDirection: 'row', gap: '1rem'}}>
                                     <Typography color={'textSecondary'}>Должность </Typography>
-                                    <Typography>{userData?.data?.role ?? '-'}</Typography>
+                                    <Typography>{getRole(userData?.data?.role) ?? '-'}</Typography>
                                 </Box>
                                 <Divider orientation="horizontal" variant="fullWidth" flexItem
                                          sx={{borderWidth: '0.5px', borderColor: '#1FD4E9', marginBlock: '0.5rem'}}/>
