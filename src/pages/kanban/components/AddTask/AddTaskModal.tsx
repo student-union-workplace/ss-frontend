@@ -60,6 +60,9 @@ export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
     const updateMutation = useMutation(TasksApi.update, {
         onSuccess: () => {
             queryClient.invalidateQueries('tasks');
+            queryClient.removeQueries('tasks');
+            queryClient.invalidateQueries('task');
+            queryClient.removeQueries('task');
         }
     });
 

@@ -30,7 +30,6 @@ export const Task = ({item, color}: EventProps) => {
         setOpenTaskModal(true)
     };
 
-
     return (
         <Paper
             variant={'outlined'}
@@ -64,7 +63,7 @@ export const Task = ({item, color}: EventProps) => {
 
                     <CalendarMonthOutlinedIcon color={new Date(item.deadline).getTime() < Date.now() ? 'error' : 'inherit'}/>
 
-                    <Typography variant={'subtitle1'}>{format(item.deadline, "dd.MM.yyyy HH:mm")}</Typography>
+                    <Typography variant={'subtitle1'}>{item.deadline ? format(item.deadline, "dd.MM.yyyy HH:mm") : '-'}</Typography>
                 </Box>
                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '6px'}}>
 

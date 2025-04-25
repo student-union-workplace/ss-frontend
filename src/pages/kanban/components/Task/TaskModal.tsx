@@ -117,7 +117,7 @@ export const TaskModal = ({open, setOpen, task, id}: TaskModalProps) => {
                     <Box sx={{display: 'flex', flexDirection: 'column'}}>
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Дедлайн</Typography>
                         <Typography
-                            color={'textPrimary'}>{format(realTask?.deadline ?? new Date(), "dd.MM.yyyy HH:mm")}</Typography>
+                            color={'textPrimary'}>{realTask?.deadline ? format(realTask?.deadline, "dd.MM.yyyy HH:mm") : '-'}</Typography>
                     </Box>
                     <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: '5px'}}>
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Статус</Typography>

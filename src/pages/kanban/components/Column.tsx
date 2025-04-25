@@ -17,7 +17,7 @@ export const Column = ({title, color, tasks, titleColor}: ColumnProps) => {
     };
 
     const {innerHeight: height} = window;
-    console.log(height)
+
     return (
         <Box>
             <Paper sx={{

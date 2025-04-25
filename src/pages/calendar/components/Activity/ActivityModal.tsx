@@ -52,7 +52,7 @@ export const ActivityModal = ({open, setOpen, id, setIdActivity}: ActivityModalP
     });
 
     return (
-        <Modal open={open} onClose={handleClose} key={data?.data?.id} disableEnforceFocus>
+        <Modal open={open} onClose={handleClose} key={id} disableEnforceFocus>
             {isLoading ? <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <CircularProgress/>
             </Box> : <Box sx={style}>
@@ -108,10 +108,10 @@ export const ActivityModal = ({open, setOpen, id, setIdActivity}: ActivityModalP
                     </Box>
                     <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: '5px'}}>
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Место проведения</Typography>
-                        <Chip variant={'outlined'} label={data?.data?.location?.name}
-                              sx={{
-                                  borderColor: `#1DB8CA`,
-                              }} size={'small'}/>
+                        {data?.data?.location?.name ? <Chip variant={'outlined'} label={data?.data?.location?.name}
+                               sx={{
+                                   borderColor: `#1DB8CA`,
+                               }} size={'small'}/> : '-'}
                     </Box>
                     <AddActivityModal open={openAddActivityModal} setOpen={setOpenAddActivityModal} idActivity={id} setIdActivity={setIdActivity}/>
                 </Box>

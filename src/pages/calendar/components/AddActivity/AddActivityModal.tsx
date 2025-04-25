@@ -68,7 +68,7 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                     name: res.data.name,
                     description: res.data.description,
                     date: res.data.date,
-                    location_id: res.data.location.id,
+                    location_id: res.data.location?.id,
                     users: res.data.users,
                 });
             }
@@ -79,15 +79,17 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
 
     const createMutation = useMutation(ActivitiesApi.create, {
         onSuccess: () => {
-            queryClient.invalidateQueries('activity');
-            queryClient.removeQueries('activity');
+            queryClient.invalidateQueries('activities');
+            queryClient.removeQueries('activities');
         }
     });
 
     const updateMutation = useMutation(ActivitiesApi.update, {
         onSuccess: () => {
             queryClient.invalidateQueries('activity');
-            queryClient.removeQueries('activity');
+            /*queryClient.removeQueries('activity');*/
+            queryClient.invalidateQueries('activities');
+            queryClient.removeQueries('activities');
         }
     });
 
@@ -106,7 +108,7 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
     const createHandler = async (values: ActivityFormValues) => {
         try {
             if (idActivity) {
-                await updateMutation.mutateAsync({
+                const response = await updateMutation.mutateAsync({
                     id: idActivity,
                     data: {
                         name: values.name,
@@ -117,10 +119,13 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                     }
                 });
 
-                reset({})
-                setOpen(false)
+                if (response.status === 200) {
+                    reset({})
+                    setOpen(false)
+                }
+
             } else {
-                await createMutation.mutateAsync({
+                const response = await createMutation.mutateAsync({
                     name: values.name,
                     description: values.description,
                     date: values.date,
@@ -128,8 +133,11 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                     location_id: values.location_id,
                 });
 
-                reset({})
-                setOpen(false)
+                if (response.status === 201) {
+                    reset({})
+                    setOpen(false)
+                }
+
             }
 
         } catch (error) {

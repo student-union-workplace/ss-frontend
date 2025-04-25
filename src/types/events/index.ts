@@ -53,3 +53,10 @@ export type EventData = {
     "locations": Location[]
     "theme": Theme
 }
+
+export type Filters = {
+    isArchived?: boolean,
+    name?: string,
+    theme_id?: string,
+    is_mine?: boolean,
+}

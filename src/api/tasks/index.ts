@@ -3,7 +3,7 @@ import {TaskFormValues} from "../../types/tasks";
 import { stringify } from 'qs';
 
 export class TasksApi {
-    static get(body: {event_name?: string | null, user_name?: string | null, is_mine?: boolean}) {
+    static get(body: {event_name?: string | null, user_name?: string | null, is_mine?: boolean, user_id?: string}) {
         const queryParams = stringify(body);
         return instance.get(`/tasks?${queryParams}`);
     }

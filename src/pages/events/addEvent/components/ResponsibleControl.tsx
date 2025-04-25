@@ -59,7 +59,7 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
         noOptionsText={'Ничего не найдено'}
         renderTags={(value, getTagProps) => value.map((option, index) => {
           const {key, ...tagProps} = getTagProps({index})
-          const label = option.name.split(' ')[0] + ' ' + option.name.split(' ')[1].split('')[0] + '.'
+          const label = option.name.split(' ')[0] + ' ' + (option.name.split(' ')?.[1]?.split('')?.[0] ?? '') + '.'
           return(
               <Chip variant={'outlined'} label={label} key={key} {...tagProps} avatar={<Avatar>OP</Avatar>} size={'small'}/>
           )

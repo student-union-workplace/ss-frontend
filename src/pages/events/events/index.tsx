@@ -35,6 +35,7 @@ export const Events = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [dateSort, setDateSort] = useState('ASC')
+    const [nameSearch, setNameSearch] = useState('');
     const nav = useNavigate()
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const open = Boolean(anchorEl);
@@ -53,8 +54,8 @@ export const Events = () => {
     };
 
     const { data: events, isLoading } = useQuery(
-        ['events', page, rowsPerPage],
-        () => EventsApi.get({page: page + 1, take: rowsPerPage}),
+        ['events', page, rowsPerPage, nameSearch],
+        () => EventsApi.get({page: page + 1, take: rowsPerPage, filters: { name: nameSearch }}),
         { refetchOnWindowFocus: false }
     );
 
@@ -85,7 +86,7 @@ export const Events = () => {
     }, [])
 
     return (
-        <Box className={'content'} sx={{marginInline: '150px'}}>
+        <Box className={'content'} sx={{marginInline: '8%'}}>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -93,19 +94,28 @@ export const Events = () => {
                 alignItems: 'center',
                 marginBottom: '25px'
             }}>
-                <TextField label={'Поиск мероприятия'} size={'small'} sx={{width: '340px'}} InputProps={{
-                    startAdornment:
-                        <InputAdornment position='start'>
-                            <SearchIcon/>
-                        </InputAdornment>
-                }}/>
-                { role !== Role.Old && <Button size={'small'} variant={'contained'} color={'primary'} sx={{width: '210px'}}
-                         onClick={() => nav(RoutesName.AddEvent)}>Создать
-                    мероприятие</Button>}
+                <TextField
+                    label={'Поиск мероприятия'}
+                    size={'small'}
+                    sx={{width: '340px'}}
+                    value={nameSearch}
+                    onChange={(e) => setNameSearch(e.target.value)}
+                    InputProps={{
+                        startAdornment:
+                            <InputAdornment position='start'>
+                                <SearchIcon/>
+                            </InputAdornment>
+                    }}
+                />
+
+                {role !== Role.Old &&
+                    <Button size={'small'} variant={'contained'} color={'primary'} sx={{width: '210px'}}
+                            onClick={() => nav(RoutesName.AddEvent)}>Создать
+                        мероприятие</Button>}
             </Box>
             {isLoading ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <CircularProgress />
+                <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <CircularProgress/>
                 </Box>
             ) : <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center',}}>
                 <TableContainer sx={{minWidth: '1024'}}>
@@ -169,7 +179,7 @@ export const Events = () => {
                                             <TableCell><Typography
                                                 variant={'subtitle1'}>{themeOptions.filter(theme => theme.value === row.theme_id)[0].label}</Typography></TableCell>
                                             <TableCell align={'left'}><Typography
-                                                variant={'subtitle1'}>{fns.format(row.date, 'd.LL.yyyy HH:mm', {locale: ru})}</Typography></TableCell>
+                                                variant={'subtitle1'}>{row?.date ? fns.format(row.date, 'd.LL.yyyy HH:mm', {locale: ru}) : '-'}</Typography></TableCell>
                                             <TableCell>
                                                 <Box sx={{
                                                     display: 'flex',
@@ -190,9 +200,9 @@ export const Events = () => {
                                                 </Box>
                                             </TableCell>
                                             <TableCell>
-                                                <Chip label={row.is_archived ? 'Архив': 'В работе'} sx={{
-                                                    backgroundColor: getChipStatusColor(row.is_archived ? 'Архив': 'В работе'),
-                                                    color: getChipFontColor(row.is_archived  ? 'Архив': 'В работе')
+                                                <Chip label={row.is_archived ? 'Архив' : 'В работе'} sx={{
+                                                    backgroundColor: getChipStatusColor(row.is_archived ? 'Архив' : 'В работе'),
+                                                    color: getChipFontColor(row.is_archived ? 'Архив' : 'В работе')
                                                 }}
                                                       size={'small'}/>
                                             </TableCell>
@@ -220,5 +230,5 @@ export const Events = () => {
                 />
             </Box>}
         </Box>
-    )
+    );
 }

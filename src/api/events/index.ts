@@ -1,9 +1,12 @@
 import {instance} from "../index.ts";
-import {EventFormValues, EventUpdateFormValues} from "../../types/events";
+import {EventFormValues, EventUpdateFormValues, Filters} from "../../types/events";
+import {stringify} from "qs";
 
 export class EventsApi {
-    static get(body: {page: number, take: number}) {
-        return instance.get(`/events?page=${body.page}&take=${body.take}`);
+    static get(body: {page: number, take: number, filters?: Filters}) {
+        const params = stringify(body.filters);
+
+        return instance.get(`/events?page=${body.page}&take=${body.take}&${params}`);
     }
 
     static getEvent(body: {id: string}) {
