@@ -36,7 +36,7 @@ export const Events = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [dateSort, setDateSort] = useState('ASC')
     const [nameSearch, setNameSearch] = useState('');
-    const nav = useNavigate()
+    const nav = useNavigate();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const open = Boolean(anchorEl);
     const role = DecodedJwt()?.role;

@@ -18,6 +18,7 @@ export const Profile = () => {
     const idJwt = DecodedJwt()!.id;
     const params = useParams();
     const idParams = params.id!;
+    const role = DecodedJwt()?.role;
     const [isEdit, setIsEdit] = useState(false);
     const {control, handleSubmit, reset} = useForm<UserFormValues>({
         defaultValues: EDIT_USER_INITIAL_VALUE,
@@ -49,6 +50,7 @@ export const Profile = () => {
             queryClient.invalidateQueries('user');
         }
     });
+
     const editHandler = async (values: UserFormValues) => {
         try {
             const response = await editMutation.mutateAsync({
@@ -100,8 +102,9 @@ export const Profile = () => {
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                         <Avatar sx={{bgcolor: '#1DB8CA', width: '150px', height: '150px', cursor: 'pointer'}}>РГ</Avatar>
                         <Button variant={'contained'} color={'primary'} size={'small'}>Загрузить фото</Button>
-                        <Button variant={'contained'} color={'primary'} size={'small'} onClick={() => setIsEdit(!isEdit)}>
-                            {isEdit ? 'Отменить' : 'Изменить данные'}</Button>
+                        {(role === Role.Admin || idParams === idJwt) && <Button variant={'contained'} color={'primary'} size={'small'}
+                                 onClick={() => setIsEdit(!isEdit)}>
+                            {isEdit ? 'Отменить' : 'Изменить данные'}</Button>}
                     </Box>
                     {isEdit ? <form onSubmit={handleSubmit(editHandler)}
                                     style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '70%'}}>
