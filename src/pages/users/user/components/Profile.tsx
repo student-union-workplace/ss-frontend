@@ -62,7 +62,7 @@ export const Profile = () => {
                     vk_link: values?.vk_link?.length ? values?.vk_link : null,
                     tg_link: values?.tg_link?.length ? values?.tg_link : null,
                     department_id: values?.department_id,
-                    role: values?.role,
+                    role: values?.role
                 }
             });
 
@@ -81,14 +81,26 @@ export const Profile = () => {
     }, [departments]);
 
     const rolesOptions = useMemo(() => {
-        return [{label: 'Заместитель', value: Role.Admin},{label: 'Член комиссии', value: Role.Member},{label: 'Песок', value: Role.Old}]
+        return [
+            {label: 'Член профбюро', value: Role.Member},
+            {label: 'Песок', value: Role.Old},
+        ]
     }, []);
 
-    const getRole = (role: Role) => {
-        switch (role) {
-            case Role.Admin: return 'Заместитель';
-            case Role.Member: return 'Член комиссии';
-            case Role.Old: return 'Песок'
+    const getRole = (role: Role, isDepartmentHead: boolean) => {
+        if (isDepartmentHead) {
+            if (role === Role.Admin) {
+                return 'Председатель'
+            } else {
+                return 'Заместитель'
+            }
+
+        } else {
+            if (role === Role.Old) {
+                return 'Песок'
+            } else {
+                return 'Член профбюро'
+            }
         }
     }
 
@@ -161,7 +173,7 @@ export const Profile = () => {
                             <Box sx={{display: 'flex', flexDirection: 'column'}}>
                                 <Box sx={{display: 'flex', flexDirection: 'row', gap: '1rem'}}>
                                     <Typography color={'textSecondary'}>Должность </Typography>
-                                    <Typography>{getRole(userData?.data?.role) ?? '-'}</Typography>
+                                    <Typography>{getRole(userData?.data?.role, userData?.data?.isDepartmentHead) ?? '-'}</Typography>
                                 </Box>
                                 <Divider orientation="horizontal" variant="fullWidth" flexItem
                                          sx={{borderWidth: '0.5px', borderColor: '#1FD4E9', marginBlock: '0.5rem'}}/>

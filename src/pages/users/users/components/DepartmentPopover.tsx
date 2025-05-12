@@ -1,25 +1,29 @@
 import {Box, FormControlLabel, Popover, Radio, RadioGroup} from "@mui/material";
 import {FormControl} from "@mui/base";
 import {Role} from "../../../../enums/roles";
+import {useQuery} from "react-query";
+import {DepartmentsApi} from "../../../../api/departments";
 
-type RolePopoverProps = {
+type DepartmentPopoverProps = {
     anchorEl: HTMLButtonElement | null;
     setAnchorEl: (anchorEl: HTMLButtonElement | null) => void;
     open: boolean;
-    role: Role | null;
-    setRole: () => void;
+    department: Role | null;
+    setDepartment: () => void;
 }
-export const RolePopover = ({ setAnchorEl, open, anchorEl, role, setRole}: RolePopoverProps) => {
+export const DepartmentPopover = ({ setAnchorEl, open, anchorEl, department, setDepartment}: DepartmentPopoverProps) => {
     const id = open ? 'simple-popover' : undefined;
     const handleClose = () => {
         setAnchorEl(null);
     };
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRole((event.target as HTMLInputElement).value);
+        setDepartment((event.target as HTMLInputElement).value);
         setAnchorEl(null);
     };
 
+    const {data: departments} = useQuery('departments', () => DepartmentsApi.get(), {refetchOnWindowFocus: false})
 
+console.log(departments)
     return (
         <Popover
             id={id}
@@ -36,12 +40,14 @@ export const RolePopover = ({ setAnchorEl, open, anchorEl, role, setRole}: RoleP
                     <RadioGroup
                         aria-labelledby="demo-controlled-radio-buttons-group"
                         name="controlled-radio-buttons-group"
-                        value={role}
+                        value={department}
                         onChange={handleChange}
                     >
                         <FormControlLabel value={null} control={<Radio />} label="Все" />
-                        <FormControlLabel value={Role.Member} control={<Radio />} label="Член ПБ" />
-                        <FormControlLabel value={Role.Old} control={<Radio />} label="Песок" />
+                        {departments?.data?.map(department => {
+                                return <FormControlLabel value={department.name} control={<Radio/>} label={department.name}/>
+                            }
+                        )}
                     </RadioGroup>
                 </FormControl>
             </Box>

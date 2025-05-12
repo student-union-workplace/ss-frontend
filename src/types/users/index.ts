@@ -34,4 +34,6 @@ export type AddUserFormValue = {
     "name": string,
     "role": Role,
     "department_id": string,
+    "email": string,
+    "password": string
 }

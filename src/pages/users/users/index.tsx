@@ -21,16 +21,17 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
 import {RolePopover} from "./components/RolePopover.tsx";
 import {AddUserModal} from "./components/AddUserModal.tsx";
+import {DepartmentPopover} from "./components/DepartmentPopover.tsx";
 
 export const UsersPage = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [roleFilter, setRoleFilter] = useState(null)
     const [anchorElRoleFilter, setAnchorElRoleFilter] = useState<HTMLButtonElement | null>(null);
-    const openRoleFilter = Boolean(anchorElRoleFilter);/*
+    const openRoleFilter = Boolean(anchorElRoleFilter);
     const [departmentFilter, setDepartmentFilter] = useState(null)
     const [anchorElDepartmentFilter, setAnchorElDepartmentFilter] = useState<HTMLButtonElement | null>(null);
-    const openDepartmentFilter = Boolean(anchorElDepartmentFilter);*/
+    const openDepartmentFilter = Boolean(anchorElDepartmentFilter);
     const nav = useNavigate();
     const role = DecodedJwt()?.role;
     const [openAddModal, setOpenAddModal] = useState(false)
@@ -44,9 +45,19 @@ export const UsersPage = () => {
         setPage(0);
     };
 
+    const handleOpenFilter = (event, columnId: string) => {
+        if (columnId === 'role') {
+            setAnchorElRoleFilter(event.currentTarget)
+        }
+
+        if (columnId === 'department') {
+            setAnchorElDepartmentFilter(event.currentTarget)
+        }
+    }
+
     const { data: users, isLoading } = useQuery(
-        ['users', page, rowsPerPage, roleFilter],
-        () => UsersApi.get({page: page + 1, take: rowsPerPage, filters: {role: roleFilter}}),
+        ['users', page, rowsPerPage, roleFilter, departmentFilter],
+        () => UsersApi.get({page: page + 1, take: rowsPerPage, filters: {role: roleFilter, departmentName: departmentFilter}}),
         { refetchOnWindowFocus: false }
     );
 
@@ -56,11 +67,20 @@ export const UsersPage = () => {
             {id: 'department', name: 'Комиссия', sorting: false, filter: true}]
     }, [])
 
-    const getRole = (role: Role) => {
-        switch (role) {
-            case Role.Admin: return 'Заместитель';
-            case Role.Member: return 'Член ПБ';
-            case Role.Old: return 'Песок'
+    const getRole = (role: Role, isDepartmentHead: boolean) => {
+        if (isDepartmentHead) {
+            if (role === Role.Admin) {
+                return 'Председатель'
+            } else {
+                return 'Заместитель'
+            }
+
+        } else {
+            if (role === Role.Old) {
+                return 'Песок'
+            } else {
+                return 'Член профбюро'
+            }
         }
     }
 
@@ -92,7 +112,7 @@ export const UsersPage = () => {
                                         <Typography variant={'subtitle2'}>{column.name}</Typography>
 
                                         {column.filter && <Box sx={{position: 'relative'}}>
-                                            <IconButton onClick={(event) => setAnchorElRoleFilter(event.currentTarget)}>
+                                            <IconButton onClick={(event) => handleOpenFilter(event, column.id)}>
                                                 <FilterListIcon color={'action'} fontSize={'small'}/>
                                             </IconButton>
                                         </Box>}
@@ -124,7 +144,7 @@ export const UsersPage = () => {
                                             </Box>
                                         </TableCell>
                                         <TableCell><Typography
-                                            variant={'subtitle1'}>{getRole(row.role)}</Typography></TableCell>
+                                            variant={'subtitle1'}>{getRole(row.role, row.isDepartmentHead)}</Typography></TableCell>
                                         <TableCell align={'left'}><Typography
                                             variant={'subtitle1'}>{row.department.name}</Typography></TableCell>
                                         {/*<TableCell>
@@ -161,6 +181,12 @@ export const UsersPage = () => {
             role={roleFilter}
             setRole={setRoleFilter}
         />
+        <DepartmentPopover
+            anchorEl={anchorElDepartmentFilter}
+            setAnchorEl={setAnchorElDepartmentFilter}
+            open={openDepartmentFilter}
+            department={departmentFilter}
+            setDepartment={setDepartmentFilter} />
         <AddUserModal open={openAddModal} setOpen={setOpenAddModal}/>
     </Box>
 }
