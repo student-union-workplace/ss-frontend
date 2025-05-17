@@ -59,4 +59,5 @@ export type Filters = {
     name?: string,
     theme_id?: string,
     is_mine?: boolean,
+    user_id?: string
 }

@@ -28,7 +28,7 @@ export const Calendar = ({ setOpenActivity, setOpenAddActivity, setIdActivity}: 
 
     const { data: events, isLoading: isLoadingEvents } = useQuery(
         ['events'],
-        () => EventsApi.get({page: 1, take: 10000}),
+        () => EventsApi.get({page: 1, take: 50}),
         { refetchOnWindowFocus: false }
     );
 

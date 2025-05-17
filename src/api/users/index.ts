@@ -1,16 +1,19 @@
 import {instance} from "../index.ts";
-import {UserFormValues} from "../../types/users";
+import {AddUserFormValue, UserFormValues} from "../../types/users";
+import {stringify} from "qs";
 
 export class UsersApi {
-    static get(body: {page: number, take: number}) {
-        return instance.get(`/users?page=${body.page}&take=${body.take}`);
+    static get(body: {page: number, take: number, filters?: {role?: string, departmentName?: string}}) {
+        const params = stringify(body.filters);
+
+        return instance.get(`/users?page=${body.page}&take=${body.take}&${params}`);
     }
 
     static getUser(body: {id: string}) {
         return instance.get(`/users/${body.id}`);
     }
 
-    static create(body: UserFormValues) {
+    static create(body: AddUserFormValue) {
         return instance.post(`/users`, body);
     }
 

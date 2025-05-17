@@ -15,6 +15,7 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import {EventsApi} from "../../../api/events";
 import {useNavigate} from "react-router-dom";
 import {RoutesName} from "../../../enums/routes";
+import {ThemesApi} from "../../../api/themes";
 
 export const AddEvent = () => {
     const queryClient = useQueryClient();
@@ -25,9 +26,16 @@ export const AddEvent = () => {
 
     const {data: events, isLoading: isLoadingEvents} = useQuery(
         ['events'],
-        () => EventsApi.get({page: 1, take: 10000}),
+        () => EventsApi.get({page: 1, take: 50}),
         {refetchOnWindowFocus: false}
     );
+
+    const { data: themes } = useQuery(
+        ['themes'],
+        () => ThemesApi.get(),
+        { refetchOnWindowFocus: false }
+    );
+
 
     const lastEventOptions = useMemo(() => {
         if (events?.data?.data) {
@@ -38,13 +46,11 @@ export const AddEvent = () => {
     }, [events])
 
     const themeOptions = useMemo(() => {
-        return [
-            {label: 'Слет', value: '0111a2d3-d3e6-11ef-aa2a-50ebf6992398'},
-            {label: 'Квиз', value: '94a1eb6c-d3e0-11ef-aa2a-50ebf6992398'},
-            {label: 'Квест', value: 'a15ad887-d3e0-11ef-aa2a-50ebf6992398'},
-            {label: 'Знакомка', value: 'ac4cf8f7-d3e0-11ef-aa2a-50ebf6992398'},
-        ]
-    }, [])
+        if (themes?.data) {
+            return themes?.data?.map((theme: EventData) => ({label: theme.name, value: theme.id}))
+        }
+
+    }, [themes?.data])
 
     const createMutation = useMutation(EventsApi.create, {
         onSuccess: () => {
@@ -65,6 +71,8 @@ export const AddEvent = () => {
                 is_archived: values.is_archived,
                 theme_id: values.theme_id
             });
+
+            console.log(response)
 
             if (response.status === 201) {
                 navigate(RoutesName.Events)

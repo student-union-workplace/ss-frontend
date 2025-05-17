@@ -18,6 +18,7 @@ export const Profile = () => {
     const idJwt = DecodedJwt()!.id;
     const params = useParams();
     const idParams = params.id!;
+    const role = DecodedJwt()?.role;
     const [isEdit, setIsEdit] = useState(false);
     const {control, handleSubmit, reset} = useForm<UserFormValues>({
         defaultValues: EDIT_USER_INITIAL_VALUE,
@@ -49,6 +50,7 @@ export const Profile = () => {
             queryClient.invalidateQueries('user');
         }
     });
+
     const editHandler = async (values: UserFormValues) => {
         try {
             const response = await editMutation.mutateAsync({
@@ -60,7 +62,7 @@ export const Profile = () => {
                     vk_link: values?.vk_link?.length ? values?.vk_link : null,
                     tg_link: values?.tg_link?.length ? values?.tg_link : null,
                     department_id: values?.department_id,
-                    role: values?.role,
+                    role: values?.role === Role.Assistant ? Role.Member : values?.role
                 }
             });
 
@@ -79,14 +81,27 @@ export const Profile = () => {
     }, [departments]);
 
     const rolesOptions = useMemo(() => {
-        return [{label: 'Заместитель', value: Role.Admin},{label: 'Член комиссии', value: Role.Member},{label: 'Песок', value: Role.Old}]
+        return [
+            {label: 'Член комиссии', value: Role.Member},
+            {label: 'Песок', value: Role.Old},
+            {label: 'Админ', value: Role.Admin},
+            {label: 'Заместитель', value: Role.Assistant}]
     }, []);
 
-    const getRole = (role: Role) => {
-        switch (role) {
-            case Role.Admin: return 'Заместитель';
-            case Role.Member: return 'Член комиссии';
-            case Role.Old: return 'Песок'
+    const getRole = (role: Role, isDepartmentHead: boolean) => {
+        if (isDepartmentHead) {
+            if (role === Role.Admin) {
+                return 'Председатель'
+            } else {
+                return 'Заместитель'
+            }
+
+        } else {
+            if (role === Role.Old) {
+                return 'Песок'
+            } else {
+                return 'Член профбюро'
+            }
         }
     }
 
@@ -100,8 +115,9 @@ export const Profile = () => {
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                         <Avatar sx={{bgcolor: '#1DB8CA', width: '150px', height: '150px', cursor: 'pointer'}}>РГ</Avatar>
                         <Button variant={'contained'} color={'primary'} size={'small'}>Загрузить фото</Button>
-                        <Button variant={'contained'} color={'primary'} size={'small'} onClick={() => setIsEdit(!isEdit)}>
-                            {isEdit ? 'Отменить' : 'Изменить данные'}</Button>
+                        {(role === Role.Admin || idParams === idJwt) && <Button variant={'contained'} color={'primary'} size={'small'}
+                                 onClick={() => setIsEdit(!isEdit)}>
+                            {isEdit ? 'Отменить' : 'Изменить данные'}</Button>}
                     </Box>
                     {isEdit ? <form onSubmit={handleSubmit(editHandler)}
                                     style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '70%'}}>
@@ -158,7 +174,7 @@ export const Profile = () => {
                             <Box sx={{display: 'flex', flexDirection: 'column'}}>
                                 <Box sx={{display: 'flex', flexDirection: 'row', gap: '1rem'}}>
                                     <Typography color={'textSecondary'}>Должность </Typography>
-                                    <Typography>{getRole(userData?.data?.role) ?? '-'}</Typography>
+                                    <Typography>{getRole(userData?.data?.role, userData?.data?.isDepartmentHead) ?? '-'}</Typography>
                                 </Box>
                                 <Divider orientation="horizontal" variant="fullWidth" flexItem
                                          sx={{borderWidth: '0.5px', borderColor: '#1FD4E9', marginBlock: '0.5rem'}}/>

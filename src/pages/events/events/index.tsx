@@ -30,13 +30,14 @@ import {EventsApi} from "../../../api/events";
 import {EventData} from "../../../types/events";
 import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
 import {Role} from "../../../enums/roles";
+import {ThemesApi} from "../../../api/themes";
 
 export const Events = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [dateSort, setDateSort] = useState('ASC')
     const [nameSearch, setNameSearch] = useState('');
-    const nav = useNavigate()
+    const nav = useNavigate();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const open = Boolean(anchorEl);
     const role = DecodedJwt()?.role;
@@ -76,14 +77,18 @@ export const Events = () => {
         }]
     }, [])
 
+    const { data: themes } = useQuery(
+        ['themes'],
+        () => ThemesApi.get(),
+        { refetchOnWindowFocus: false }
+    );
+
     const themeOptions = useMemo(() => {
-        return [
-            {label: 'Слет', value: '0111a2d3-d3e6-11ef-aa2a-50ebf6992398'},
-            {label: 'Квиз', value: '94a1eb6c-d3e0-11ef-aa2a-50ebf6992398'},
-            {label: 'Квест', value: 'a15ad887-d3e0-11ef-aa2a-50ebf6992398'},
-            {label: 'Знакомка', value: 'ac4cf8f7-d3e0-11ef-aa2a-50ebf6992398'},
-        ]
-    }, [])
+        if (themes?.data) {
+            return themes?.data?.map((theme: EventData) => ({label: theme.name, value: theme.id}))
+        }
+
+    }, [themes?.data])
 
     return (
         <Box className={'content'} sx={{marginInline: '8%'}}>
@@ -177,7 +182,7 @@ export const Events = () => {
                                                 </Box>
                                             </TableCell>
                                             <TableCell><Typography
-                                                variant={'subtitle1'}>{themeOptions.filter(theme => theme.value === row.theme_id)[0].label}</Typography></TableCell>
+                                                variant={'subtitle1'}>{themeOptions?.filter(theme => theme.value === row.theme_id)[0].label}</Typography></TableCell>
                                             <TableCell align={'left'}><Typography
                                                 variant={'subtitle1'}>{row?.date ? fns.format(row.date, 'd.LL.yyyy HH:mm', {locale: ru}) : '-'}</Typography></TableCell>
                                             <TableCell>

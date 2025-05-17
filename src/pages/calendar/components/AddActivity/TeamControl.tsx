@@ -17,7 +17,7 @@ export type AutocompleteControlProps = {
 export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteControlProps) => {
     const {data: users} = useQuery(
         ['users'],
-        () => UsersApi.get({page: 1, take: 1000}),
+        () => UsersApi.get({page: 1, take: 50}),
         {refetchOnWindowFocus: false}
     );
 

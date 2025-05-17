@@ -24,6 +24,7 @@ import Switch from "@mui/material/Switch";
 import {DecodedJwt} from "../../../utils/jwt/DecodedJwt.tsx";
 import {Role} from "../../../enums/roles";
 import {RoutesName} from "../../../enums/routes";
+import {ThemesApi} from "../../../api/themes";
 
 export const Event = () => {
     const queryClient = useQueryClient();
@@ -46,18 +47,15 @@ export const Event = () => {
         defaultValues: ADD_EVENT_INITIAL_VALUE,
     });
 
-    const themeOptions = useMemo(() => {
-        return [
-            {label: 'Слет', value: '0111a2d3-d3e6-11ef-aa2a-50ebf6992398'},
-            {label: 'Квиз', value: '94a1eb6c-d3e0-11ef-aa2a-50ebf6992398'},
-            {label: 'Квест', value: 'a15ad887-d3e0-11ef-aa2a-50ebf6992398'},
-            {label: 'Знакомка', value: 'ac4cf8f7-d3e0-11ef-aa2a-50ebf6992398'},
-        ]
-    }, [])
+    const { data: themes } = useQuery(
+        ['themes'],
+        () => ThemesApi.get(),
+        { refetchOnWindowFocus: false }
+    );
 
     const { data: events } = useQuery(
         ['events'],
-        () => EventsApi.get({page:  1, take: 1000}),
+        () => EventsApi.get({page:  1, take: 50}),
         { refetchOnWindowFocus: false }
     );
 
@@ -66,6 +64,15 @@ export const Event = () => {
             return events?.data?.data.map((event: EventData) => ({label: event.name, value: event.id}))
         }
     }, [events?.data?.data])
+
+    const themeOptions = useMemo(() => {
+        if (themes?.data) {
+            return themes?.data?.map((theme: EventData) => ({label: theme.name, value: theme.id}))
+        }
+        
+    }, [themes?.data])
+
+    console.log(themes?.data?.map((theme: EventData) => ({label: theme.name, value: theme.id})))
 
     const documents = useMemo(() => {
         return {
@@ -310,7 +317,7 @@ export const Event = () => {
                     : <Box>
                         <Typography variant={'subtitle2'} color={'textSecondary'}>Тема мероприятия</Typography>
                         <Typography variant={'h6'}
-                                    onDoubleClick={() => setIsEditTheme(true)}>{themeOptions.filter((theme) => theme.value === watch('theme_id'))[0]?.label ?? '-'}</Typography>
+                                    onDoubleClick={() => setIsEditTheme(true)}>{themeOptions?.filter((theme) => theme.value === watch('theme_id'))[0]?.label ?? '-'}</Typography>
                     </Box>
                 }
                 {isEditDescription && role !== Role.Old  ?

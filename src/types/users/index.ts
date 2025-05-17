@@ -1,8 +1,10 @@
+import {Role} from "../../enums/roles";
+
 export type UserData = {
     "id": string,
     "name": string,
     "email": string,
-    "role": string,
+    "role": Role,
     "department_id": string,
     "department": Department,
     "isDepartmentHead": boolean,
@@ -26,4 +28,12 @@ export type UserFormValues = {
     phone_number: string | null,
     vk_link: string | null,
     tg_link: string | null,
+}
+
+export type AddUserFormValue = {
+    "name": string,
+    "role": Role,
+    "department_id": string,
+    "email": string,
+    "password": string
 }
