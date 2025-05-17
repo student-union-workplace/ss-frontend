@@ -62,7 +62,7 @@ export const Profile = () => {
                     vk_link: values?.vk_link?.length ? values?.vk_link : null,
                     tg_link: values?.tg_link?.length ? values?.tg_link : null,
                     department_id: values?.department_id,
-                    role: values?.role
+                    role: values?.role === Role.Assistant ? Role.Member : values?.role
                 }
             });
 
@@ -82,9 +82,10 @@ export const Profile = () => {
 
     const rolesOptions = useMemo(() => {
         return [
-            {label: 'Член профбюро', value: Role.Member},
+            {label: 'Член комиссии', value: Role.Member},
             {label: 'Песок', value: Role.Old},
-        ]
+            {label: 'Админ', value: Role.Admin},
+            {label: 'Заместитель', value: Role.Assistant}]
     }, []);
 
     const getRole = (role: Role, isDepartmentHead: boolean) => {

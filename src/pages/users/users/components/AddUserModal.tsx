@@ -47,7 +47,11 @@ export const AddUserModal = ({open, setOpen}: AddUserModalProps) => {
     }, [departments]);
 
     const rolesOptions = useMemo(() => {
-        return [{label: 'Член комиссии', value: Role.Member},{label: 'Песок', value: Role.Old}]
+        return [
+            {label: 'Член комиссии', value: Role.Member},
+            {label: 'Песок', value: Role.Old},
+            {label: 'Админ', value: Role.Admin},
+            {label: 'Заместитель', value: Role.Assistant}]
     }, []);
 
     const createMutation = useMutation(UsersApi.create, {
@@ -61,7 +65,7 @@ export const AddUserModal = ({open, setOpen}: AddUserModalProps) => {
             const response = await createMutation.mutateAsync({
                 name: values?.name,
                 department_id: values?.department_id,
-                role: values?.role,
+                role: values?.role === Role.Assistant ? Role.Member : values?.role,
                 email: values?.email,
                 password: values?.password
             });

@@ -18,7 +18,7 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
 
   const {data: users} = useQuery(
       ['users'],
-      () => UsersApi.get({page: 1, take: 1000}),
+      () => UsersApi.get({page: 1, take: 50}),
       {refetchOnWindowFocus: false}
   );
 

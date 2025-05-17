@@ -1,4 +1,4 @@
-import {Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import {LoginPage} from "./pages/auth/LoginPage";
 import {RegisterPage} from "./pages/auth/RegisterPage";
 import {RoutesName} from "./enums/routes";
@@ -34,6 +34,7 @@ function App() {
                 <Route path={RoutesName.Events} element={<AuthRouter roles={[Role.Admin, Role.Member, Role.Old]}><Events /></AuthRouter>}/>
                 <Route path={`${RoutesName.User}:id`} element={<AuthRouter roles={[Role.Admin, Role.Member, Role.Old]}><UserPage /></AuthRouter>}/>
                 <Route path={RoutesName.Users} element={<AuthRouter roles={[Role.Admin, Role.Member, Role.Old]}><UsersPage /></AuthRouter>}/>
+                <Route path="*" element={<Navigate to="/kanban" replace />} />
             </Routes></QueryClientProvider>
         </>
     )

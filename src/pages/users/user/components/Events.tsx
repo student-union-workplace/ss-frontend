@@ -28,7 +28,7 @@ export const Events = () => {
 
     const {data: events} = useQuery(
         ['events', value],
-        () => EventsApi.get({page: 1, take: 10000, filters: {isArchived: value === 'archived'}}),
+        () => EventsApi.get({page: 1, take: 50, filters: {isArchived: value === 'archived',user_id: idParams }}),
         {refetchOnWindowFocus: false}
     );
 
