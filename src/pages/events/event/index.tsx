@@ -93,7 +93,7 @@ export const Event = () => {
         }
     }, []);
 
-    const { isLoading } = useQuery('event', () => EventsApi.getEvent({id:eventId as string}), {
+    const { data: event, isLoading } = useQuery('event', () => EventsApi.getEvent({id:eventId as string}), {
         onSuccess: res => {
             {
                 console.log(res);
@@ -457,8 +457,7 @@ export const Event = () => {
                     </Box>}
             </Box>
         </Box>
-        <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} control={control}
-                          name={'docs'}/>
+        <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} idEvent={event.data.id} />
     </Box>
 
     )
