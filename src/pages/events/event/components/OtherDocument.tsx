@@ -1,14 +1,10 @@
 import {Box, IconButton, Typography} from "@mui/material";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {File} from "../../../../types/events";
 
 type OtherDocumentProps = {
-    doc: {
-        type: string,
-        title: string,
-        link: string
-    }
-
+    doc: File
 }
 
 export const OtherDocument = ({doc}: OtherDocumentProps) => {
@@ -30,7 +26,7 @@ export const OtherDocument = ({doc}: OtherDocumentProps) => {
                     fontWeight: '600',
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
-                }}>{doc.title}</Typography>
+                }}>{doc.name}</Typography>
             </Box>
             <Box sx={{display: 'flex', flexDirection: 'row'}}>
                 <IconButton color={'primary'}>

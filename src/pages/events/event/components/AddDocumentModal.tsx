@@ -28,7 +28,7 @@ const style = {
 };
 
 export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps) => {
-    const [typeDocument, setTypeDocument] = useState<string | null>(null);
+    const [typeDocument, setTypeDocument] = useState<{label: string, value: string} | null>(null);
     const [fileName, setFileName] = useState('');
     const queryClient = useQueryClient();
 
@@ -46,7 +46,13 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
 
     const createGoogleDocMutation = useMutation(FilesApi.addGoogleDocForEvent, {
         onSuccess: () => {
-            queryClient.invalidateQueries('files');
+            queryClient.invalidateQueries('event');
+        }
+    });
+
+    const createGoogleSheetMutation = useMutation(FilesApi.addGoogleSheetForEvent, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('event');
         }
     });
 
@@ -61,8 +67,27 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
         }
     };
 
-    const createFileHandler = async () => {
-        await createGoogleDocHandler();
+    const createGoogleSheetHandler = async () => {
+        try {
+            await createGoogleSheetMutation.mutateAsync({
+                title: fileName,
+                eventId: idEvent,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const createFileHandler = async (e) => {
+        e.preventDefault();
+        if (typeDocument?.value === 'doc') {
+            await createGoogleDocHandler();
+        }
+
+        if (typeDocument?.value === 'sheet') {
+            await createGoogleSheetHandler();
+        }
+        setOpen(false)
     }
 
     return (
@@ -92,13 +117,14 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
                         )}
                         options={typesDocument}
                         value={typeDocument}
-                        onInputChange={(event: never, newValue: string | null) => {
+                        onChange={(event: never, newValue: string | null) => {
+                            console.log(event);
                             setTypeDocument(newValue);
                         }}
                     />
                     <TextField label={'Название документа'} value={fileName} onChange={(event) => setFileName(event.target.value)}/>
                 </Box>
-                <IconButton color={'primary'} onClick={createFileHandler}>
+                <IconButton color={'primary'} onClick={(e) => createFileHandler(e)}>
                     <CheckCircleOutlineIcon/>
                 </IconButton>
             </Box>

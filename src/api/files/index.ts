@@ -12,6 +12,10 @@ export class FilesApi {
         return instance.post(`/google-docs/event`, body);
     }
 
+    static deleteGoogleDoc(body: {fileId: string}) {
+        return instance.delete(`/google-docs?fileId=${body.fileId}`);
+    }
+
     // Google sheets
     static addGoogleSheet(body: {title: string}) {
         return instance.post(`/google-sheets`, body);
@@ -19,6 +23,10 @@ export class FilesApi {
 
     static addGoogleSheetForEvent(body: {title: string, eventId: string}) {
         return instance.post(`/google-sheets/event`, body);
+    }
+
+    static deleteGoogleSheet(body: {fileId: string}) {
+        return instance.delete(`/google-sheets?fileId=${body.fileId}`);
     }
 
 }
