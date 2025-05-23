@@ -47,6 +47,8 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
     const createGoogleDocMutation = useMutation(FilesApi.addGoogleDocForEvent, {
         onSuccess: () => {
             queryClient.invalidateQueries('event');
+            queryClient.removeQueries('event');
+            queryClient.invalidateQueries('event');
         }
     });
 
@@ -56,38 +58,27 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
         }
     });
 
-    const createGoogleDocHandler = async () => {
-        try {
-            await createGoogleDocMutation.mutateAsync({
-                title: fileName,
-                eventId: idEvent,
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const createGoogleSheetHandler = async () => {
-        try {
-            await createGoogleSheetMutation.mutateAsync({
-                title: fileName,
-                eventId: idEvent,
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     const createFileHandler = async (e) => {
         e.preventDefault();
-        if (typeDocument?.value === 'doc') {
-            await createGoogleDocHandler();
-        }
+        try {
+            if (typeDocument?.value === 'doc') {
+                await createGoogleDocMutation.mutateAsync({
+                    title: fileName,
+                    eventId: idEvent,
+                });
+            }
 
-        if (typeDocument?.value === 'sheet') {
-            await createGoogleSheetHandler();
+            if (typeDocument?.value === 'sheet') {
+                await createGoogleSheetMutation.mutateAsync({
+                    title: fileName,
+                    eventId: idEvent,
+                });
+            }
+            setOpen(false);
+        } catch (error) {
+            console.log(error);
         }
-        setOpen(false)
+        setOpen(false);
     }
 
     return (

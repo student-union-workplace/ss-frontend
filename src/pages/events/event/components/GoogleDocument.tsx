@@ -12,48 +12,21 @@ type GoogleDocumentProps = {
 export const GoogleDocument = ({doc}: GoogleDocumentProps) => {
     const queryClient = useQueryClient();
 
-    const deleteGoogleDocMutation = useMutation(FilesApi.deleteGoogleDoc, {
+    const deleteDocumentMutation = useMutation(FilesApi.deleteDocument, {
         onSuccess: () => {
             queryClient.invalidateQueries('event');
         }
     });
-
-    const deleteGoogleSheetMutation = useMutation(FilesApi.deleteGoogleSheet, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('event');
-        }
-    });
-
-    const deleteGoogleDocHandler = async () => {
-        try {
-            await deleteGoogleDocMutation.mutateAsync({
-                fileId: doc.id,
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const deleteGoogleSheetHandler = async () => {
-        try {
-            await deleteGoogleSheetMutation.mutateAsync({
-                fileId: doc.id,
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     const deleteFileHandler = async (e) => {
         e.preventDefault();
-        if (doc.type === 'doc') {
-            await deleteGoogleDocHandler();
+        try {
+            await deleteDocumentMutation.mutateAsync({
+                fileId: doc.id,
+            });
+        } catch (error) {
+            console.log(error);
         }
-
-        if (doc.type === 'sheet') {
-            await deleteGoogleSheetHandler();
-        }
-
     }
 
     return (

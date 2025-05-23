@@ -2,12 +2,33 @@ import {Box, IconButton, Typography} from "@mui/material";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {File} from "../../../../types/events";
+import {useMutation, useQueryClient} from "react-query";
+import {FilesApi} from "../../../../api/files";
 
 type OtherDocumentProps = {
     doc: File
 }
 
 export const OtherDocument = ({doc}: OtherDocumentProps) => {
+    const queryClient = useQueryClient();
+
+    const deleteDocumentMutation = useMutation(FilesApi.deleteDocument, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('event');
+        }
+    });
+
+    const deleteFileHandler = async (e) => {
+        e.preventDefault();
+        try {
+            await deleteDocumentMutation.mutateAsync({
+                fileId: doc.id,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
             <Box sx={{
@@ -32,7 +53,7 @@ export const OtherDocument = ({doc}: OtherDocumentProps) => {
                 <IconButton color={'primary'}>
                     <FileDownloadIcon/>
                 </IconButton>
-                <IconButton color={'primary'}>
+                <IconButton color={'primary'} onClick={(e) => deleteFileHandler(e)}>
                     <DeleteIcon/>
                 </IconButton>
             </Box>
