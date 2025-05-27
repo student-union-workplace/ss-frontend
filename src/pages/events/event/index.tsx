@@ -72,28 +72,7 @@ export const Event = () => {
         
     }, [themes?.data])
 
-    console.log(themes?.data?.map((theme: EventData) => ({label: theme.name, value: theme.id})))
-
-    const documents = useMemo(() => {
-        return {
-            google: [{type: 'doc', title: 'Сценарий для ведущих', link: '/'}, {
-                type: 'xls',
-                title: 'Эксель для гугла вот такой вот',
-                link: '/'
-            }, {
-                type: 'xls',
-                title: 'Эксель для гугла вот такой вот',
-                link: '/'
-            }],
-            other: [{type: 'ppt', title: 'Презентация, загруженная прямо из компьютера', link: '/'}, {
-                type: 'xlsx',
-                title: 'Эксель табличка настоящая',
-                link: '/'
-            }]
-        }
-    }, []);
-
-    const { isLoading } = useQuery('event', () => EventsApi.getEvent({id:eventId as string}), {
+    const { data: event, isLoading } = useQuery('event', () => EventsApi.getEvent({id:eventId as string}), {
         onSuccess: res => {
             {
                 console.log(res);
@@ -117,9 +96,18 @@ export const Event = () => {
         refetchOnWindowFocus: false,
     });
 
+    const documents = useMemo(() => {
+        if (event?.data) {
+            return {
+                google: event?.data?.files?.filter(file => file.type === 'doc' || file.type === 'sheet'),
+                other: event?.data?.files?.filter(file => file.type === 'other')
+            }
+        }
+    }, [event?.data])
+
     const updateMutation = useMutation(EventsApi.update, {
         onSuccess: () => {
-            queryClient.invalidateQueries('events');
+            queryClient.invalidateQueries('event');
         }
     });
 
@@ -384,19 +372,24 @@ export const Event = () => {
                         <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                             <Typography variant={'caption'}>Google</Typography>
                             <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                                {documents.google.map((doc) => {
+                                {documents?.google?.length > 0 ? documents?.google?.map((doc) => {
                                         return <GoogleDocument doc={doc}/>
                                     }
-                                )}
+                                ) :
+                                    <Typography variant={'caption'} color={'primary'}>Файлов нет</Typography>
+                                }
+
                             </Box>
                         </Box>
                         <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                             <Typography variant={'caption'}>Дополнительные файлы</Typography>
                             <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                                {documents.other.map((doc) => {
-                                        return <OtherDocument doc={doc}/>
-                                    }
-                                )}
+                                {documents?.other?.length > 0 ? documents?.other?.map((doc) => {
+                                            return <OtherDocument doc={doc}/>
+                                        }
+                                    ) :
+                                    <Typography variant={'caption'} color={'primary'}>Файлов нет</Typography>
+                                }
                             </Box>
                         </Box>
                     </Box>
@@ -457,8 +450,7 @@ export const Event = () => {
                     </Box>}
             </Box>
         </Box>
-        <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} control={control}
-                          name={'docs'}/>
+        <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} idEvent={event.data.id} />
     </Box>
 
     )

@@ -38,6 +38,23 @@ export type Location = {
     "address": string
 }
 
+export type File = {
+    "id": string,
+    "name": string
+    "path": string,
+    "type": string,
+    "created_at": string,
+    "users": {
+        "id": string,
+        "name": string
+    },
+    "url": string,
+    "created_by": {
+        "id": string,
+        "name": string
+    }
+}
+
 export type EventData = {
     "id": string,
     "name": string,
@@ -51,8 +68,9 @@ export type EventData = {
     "users": User[],
     "managers": User[],
     "locations": Location[]
-    "theme": Theme
-}
+    "theme": Theme,
+    "files": File[],
+};
 
 export type Filters = {
     isArchived?: boolean,
