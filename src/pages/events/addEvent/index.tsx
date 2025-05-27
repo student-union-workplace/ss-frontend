@@ -59,18 +59,21 @@ export const AddEvent = () => {
     });
 
     const createHandler = async (values: EventFormValues) => {
-        try {
-            const response = await createMutation.mutateAsync({
+
+        const filteredData = Object.fromEntries(
+            Object.entries({
                 name: values.name,
                 date: values.date,
-                locations: values.locations.map(location => location.id),
-                managers: values.managers.map(user => user.id),
-                users: values.users.map(user => user.id),
+                locations: values.locations?.map(location => location.id)?.length ? values.locations?.map(location => location.id) : null,
+                managers: values.managers?.map(user => user.id)?.length ? values.managers?.map(user => user.id) : null,
+                users: values.users?.map(user => user.id)?.length ? values.users?.map(user => user.id) : null,
                 past_event_id: values.past_event_id,
                 description: values.description,
-                is_archived: values.is_archived,
                 theme_id: values.theme_id
-            });
+            }).filter(([, value]) => value !== null)
+        );
+        try {
+            const response = await createMutation.mutateAsync(filteredData);
 
             console.log(response)
 
