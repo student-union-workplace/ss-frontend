@@ -11,10 +11,12 @@ export type AutocompleteControlProps = {
   value: string | null;
   onChange: (value: string| null) => void;
   onBlur: () => void;
-  label: string
+  label: string;
+  errors: {name: string; message: string};
+  name: string;
 };
 
-export const ResponsibleControl = ({value, onChange, onBlur, label}: AutocompleteControlProps) => {
+export const ResponsibleControl = ({value, onChange, onBlur, label, errors, name}: AutocompleteControlProps) => {
     const {data: users} = useQuery(
         ['users'],
         () => UsersApi.get({page: 1, take: 1000}),
@@ -25,17 +27,20 @@ export const ResponsibleControl = ({value, onChange, onBlur, label}: Autocomplet
     return users?.data?.data.filter((user: UserData) => value?.indexOf(user.id) !== -1) ?? [];
   }, [users, value]);
 
+  console.log(errors);
 
   return (
       usersValues && (
       <Autocomplete
-        renderInput={params => (
+        renderInput={(params) => (
           <TextField
             {...params}
             label={label}
             autoComplete='off'
             aria-autocomplete='none'
             onBlur={onBlur}
+            error={Boolean(errors[name])}
+            helperText={errors?.[name] && (errors[name]?.message as string)}
           />
         )}
         options={users?.data?.data ?? []}

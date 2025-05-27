@@ -13,6 +13,7 @@ export const CustomControl = ({ control, name, Component, label, onBlur}: Custom
         onChange={onChange}
         value={value}
         error={!!errors[name]}
+        errors={errors}
         name={name}
         onBlur={onBlur}
         label={label}

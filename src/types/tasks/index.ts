@@ -1,9 +1,10 @@
 export type TaskFormValues = {
     name?: string;
-    description?: string;
+    description?: string | null;;
     deadline?: string | null;
     user_id?: string;
-    status?: 'open' | 'at_work' | 'review' | 'closed'
+    status?: 'open' | 'at_work' | 'review' | 'closed';
+    event_id?: string;
 }
 
 export type TaskData = {

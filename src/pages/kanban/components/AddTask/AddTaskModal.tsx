@@ -11,6 +11,8 @@ import Button from "@mui/material/Button";
 import {useEffect, useMemo} from "react";
 import {useMutation, useQueryClient} from "react-query";
 import {TasksApi} from "../../../../api/tasks";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {useValidation} from "./use-validation.ts";
 
 const style = {
     position: 'absolute',
@@ -31,15 +33,19 @@ type AddTaskModalProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
     task?: TaskData,
+    eventId?: string;
 }
 
-export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
+export const AddTaskModal = ({open, setOpen, task, eventId}: AddTaskModalProps) => {
     const queryClient = useQueryClient();
     const handleClose = () => {
         setOpen(false)
+        reset({})
     }
+    const validation = useValidation();
     const {control, reset, handleSubmit} = useForm<TaskFormValues>({
         defaultValues: ADD_TASK_INITIAL_VALUE,
+        resolver: yupResolver(validation)
     });
 
     const statusOptions = useMemo(() => {
@@ -74,25 +80,28 @@ export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
                     data: {
                         name: values.name,
                         deadline: values.deadline,
-                        description: values.description,
+                        description: values.description?.length ? values.description : null,
                         status: values.status,
                         user_id: values.user_id
                     }
                 });
 
                 if (response.status === 200) {
+                    reset({})
                     setOpen(false)
                 }
             } else {
                 const response = await createMutation.mutateAsync({
                     name: values.name,
                     deadline: values.deadline,
-                    description: values.description,
+                    description: values.description?.length ? values.description : null,
                     status: values.status,
-                    user_id: values.user_id
+                    user_id: values.user_id,
+                    event_id: eventId ?? ''
                 });
 
                 if (response.status === 201) {
+                    reset({})
                     setOpen(false)
                 }
             }

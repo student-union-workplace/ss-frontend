@@ -1,6 +1,6 @@
 import {Box, Divider, FormControlLabel, IconButton, TextField, Typography} from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import {useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 import Checkbox from "@mui/material/Checkbox";
 import FilterListIcon from '@mui/icons-material/FilterList';
 import Button from "@mui/material/Button";
@@ -15,15 +15,16 @@ import {useSearchParams} from "react-router-dom";
 
 export const KanbanPage = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [eventName, setEventName] = useState(null)
-    const [userName, setUserName] = useState(null)
-    const [isMine, setIsMine] = useState(false)
-    const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
+    const [eventName, setEventName] = useState(null);
+    const [eventId, setEventId] = useState(null);
+    const [userName, setUserName] = useState(null);
+    const [isMine, setIsMine] = useState(false);
+    const [openAddTaskModal, setOpenAddTaskModal] = useState(false);
     const open = Boolean(anchorEl);
     const [searchParams] = useSearchParams();
     const name = searchParams.get('name');
     const userIdParams = searchParams.get('userId');
-    const [userId, setUserId] = useState(null)
+    const [userId, setUserId] = useState(null);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -49,6 +50,8 @@ export const KanbanPage = () => {
         }
     }, [name, userIdParams])
 
+    console.log(eventId)
+
     return (
         <Box className={'content'}
              sx={{
@@ -69,9 +72,13 @@ export const KanbanPage = () => {
                     size={'small'}
                     onInputChange={(event: never, newValue: string | null) => {
                         setEventName(newValue);
-                        console.log(newValue)
                     }}
-                    options={events?.data?.data?.map(event => event.name) ?? []}
+                    onChange={(event: never, newValue: string | null) => {
+                        setEventId(newValue.value);
+                    }}
+                    options={events?.data?.data?.map(event => ({
+                        label: event.name, value: event.id
+                    })) ?? []}
                     sx={{width: '350px'}}
                     /*getOptionLabel={(option: EventData) => option?.name}*/
                     value={eventName}
@@ -111,7 +118,7 @@ export const KanbanPage = () => {
                 <Column tasks={tasks?.data?.filter((task: TaskData) => task.status === 'closed')}
                         title={'Выполнена'} titleColor={'#01AF2D'} color={'#34C759'}/>
             </Box>
-            <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal}/>
+            <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal} eventId={eventId}/>
         </Box>
     )
 }
