@@ -12,6 +12,10 @@ export class FilesApi {
         return instance.post(`/google-docs/event`, body);
     }
 
+    static updateGoogleDoc(body: {name: string, id: string}) {
+        return instance.patch(`/google-docs/${body.id}`, {name: body.name});
+    }
+
     // Google sheets
     static addGoogleSheet(body: {title: string}) {
         return instance.post(`/google-sheets`, body);
@@ -23,6 +27,10 @@ export class FilesApi {
 
     static deleteDocument(body: {fileId: string}) {
         return instance.delete(`/files/${body.fileId}`);
+    }
+
+    static updateGoogleSheet(body: {name: string, id: string}) {
+        return instance.patch(`/google-sheets/${body.id}`, {name: body.name});
     }
 
 }

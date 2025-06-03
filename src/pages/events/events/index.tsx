@@ -35,12 +35,14 @@ import {ThemesApi} from "../../../api/themes";
 export const Events = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [dateSort, setDateSort] = useState('ASC')
+    const [dateSort, setDateSort] = useState<'asc' | 'desc'>('desc');
+    const [isArchived, setIsArchived] = useState(null);
     const [nameSearch, setNameSearch] = useState('');
     const nav = useNavigate();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const open = Boolean(anchorEl);
     const role = DecodedJwt()?.role;
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -55,8 +57,8 @@ export const Events = () => {
     };
 
     const { data: events, isLoading } = useQuery(
-        ['events', page, rowsPerPage, nameSearch],
-        () => EventsApi.get({page: page + 1, take: rowsPerPage, filters: { name: nameSearch }}),
+        ['events', page, rowsPerPage, nameSearch, dateSort, isArchived],
+        () => EventsApi.get({page: page + 1, take: rowsPerPage, filters: { name: nameSearch, order: dateSort, isArchived: isArchived }}),
         { refetchOnWindowFocus: false }
     );
 
@@ -141,8 +143,8 @@ export const Events = () => {
 
                                             <Typography variant={'subtitle2'}>{column.name}</Typography>
                                             {column.sorting && (<IconButton
-                                                    onClick={() => setDateSort(dateSort === 'ASC' ? 'DESK' : 'ASC')}>
-                                                    {dateSort === 'ASC' ? <ArrowDownwardIcon color={'action'}/> :
+                                                    onClick={() => setDateSort(dateSort === 'asc' ? 'desc' : 'asc')}>
+                                                    {dateSort === 'asc' ? <ArrowDownwardIcon color={'action'}/> :
                                                         <ArrowUpwardIcon color={'action'}/>}
                                                 </IconButton>
 
@@ -152,7 +154,7 @@ export const Events = () => {
                                                     <FilterListIcon color={'action'} fontSize={'small'}/>
                                                 </IconButton>
                                                 <StatusPopover open={open} anchorEl={anchorEl}
-                                                               setAnchorEl={setAnchorEl}/>
+                                                               setAnchorEl={setAnchorEl} isArchived={isArchived} setIsArchived={setIsArchived} />
                                             </Box>}
                                         </Box>
                                     </TableCell>
@@ -163,7 +165,7 @@ export const Events = () => {
                             {events?.data?.data
                                 .map((row: EventData) => {
                                     return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.name} sx={{
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.id} sx={{
                                             "& .MuiTableRow-root:hover": {
                                                 backgroundColor: "primary.light"
                                             },

@@ -22,7 +22,6 @@ export const UsersPopover = ({setAnchorEl, open, anchorEl, userName, setUserName
         {refetchOnWindowFocus: false}
     );
 
-    console.log(userName)
     return (
         <Popover
             id={id}
