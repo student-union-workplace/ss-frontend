@@ -7,7 +7,7 @@ const token = localStorage.getItem('token')
 export const instance = axios.create({
     baseURL: BASE_URL,
     timeout: 1000,
-    headers: {'Authorization': 'Bearer ' + token}
+    headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Accept': '*/*'}
 });
 
 instance.interceptors.response.use(response => {

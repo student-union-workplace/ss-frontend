@@ -77,5 +77,6 @@ export type Filters = {
     name?: string,
     theme_id?: string,
     is_mine?: boolean,
-    user_id?: string
+    user_id?: string,
+    order?: 'asc' | 'desc'
 }
