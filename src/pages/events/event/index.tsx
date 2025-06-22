@@ -74,7 +74,7 @@ export const Event = () => {
         
     }, [themes?.data])
 
-    const { data: event, isLoading } = useQuery('event', () => EventsApi.getEvent({id:eventId as string}), {
+    const { data: event, isLoading } = useQuery(['event', eventId], () => EventsApi.getEvent({id:eventId as string}), {
         onSuccess: res => {
             {
                 console.log(res);
@@ -293,7 +293,7 @@ export const Event = () => {
                                 variant={'h6'}
                                 onDoubleClick={() => setIsEditLastEvent(true)}
                             >
-                                {events?.data?.data?.filter((event: EventData) => event.id === watch('past_event_id')) ?? '-'}
+                                {events?.data?.data?.filter((event: EventData) => event.id === watch('past_event_id'))?.[0]?.name ?? '-'}
                             </Typography>
                             <IconButton color={'primary'} onClick={() => nav(`${RoutesName.Event}${watch('past_event_id')}`)}>
                                 <OpenInNewIcon/>
