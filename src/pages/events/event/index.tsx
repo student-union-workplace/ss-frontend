@@ -61,8 +61,10 @@ export const Event = () => {
 
     const lastEventOptions = useMemo(() => {
         if (events?.data?.data) {
-            return events?.data?.data.map((event: EventData) => ({label: event.name, value: event.id}))
+            return events?.data?.data.map((event: EventData) => ({label: event.name ?? '', value: event.id}))
         }
+
+        return [];
     }, [events?.data?.data])
 
     const themeOptions = useMemo(() => {
@@ -291,9 +293,9 @@ export const Event = () => {
                                 variant={'h6'}
                                 onDoubleClick={() => setIsEditLastEvent(true)}
                             >
-                                {events?.data?.data?.filter((event: EventData) => event.id === watch('past_event_id'))[0]?.name ?? '-'}
+                                {events?.data?.data?.filter((event: EventData) => event.id === watch('past_event_id')) ?? '-'}
                             </Typography>
-                            <IconButton color={'primary'}>
+                            <IconButton color={'primary'} onClick={() => nav(`${RoutesName.Event}${watch('past_event_id')}`)}>
                                 <OpenInNewIcon/>
                             </IconButton>
                         </Box>
@@ -450,7 +452,7 @@ export const Event = () => {
                     </Box>}
             </Box>
         </Box>
-        <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} idEvent={event.data.id} />
+        <AddDocumentModal open={openAddDocumentModal} setOpen={setOpenAddDocumentModal} idEvent={event?.data?.id} />
     </Box>
 
     )

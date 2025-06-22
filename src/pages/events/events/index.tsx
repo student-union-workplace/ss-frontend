@@ -179,7 +179,7 @@ export const Events = () => {
                                                     cursor: 'pointer'
                                                 }} onClick={() => nav(`${RoutesName.Event}${row.id}`)}>
                                                     <Typography
-                                                        variant={'subtitle1'}>{row.name}</Typography>
+                                                        variant={'subtitle1'}>{row.name ?? '-'}</Typography>
                                                     <OpenInNewIcon fontSize={'small'}/>
                                                 </Box>
                                             </TableCell>

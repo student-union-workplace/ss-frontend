@@ -12,18 +12,20 @@ import {TasksApi} from "../../api/tasks";
 import {TaskData} from "../../types/tasks";
 import {EventsApi} from "../../api/events";
 import {useSearchParams} from "react-router-dom";
+import {EventData} from "../../types/events";
 
 export const KanbanPage = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [eventName, setEventName] = useState(null)
-    const [userName, setUserName] = useState(null)
-    const [isMine, setIsMine] = useState(false)
-    const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
+    const [eventName, setEventName] = useState<string | null>(null);
+    const [eventId, setEventId] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string | null>(null);
+    const [isMine, setIsMine] = useState(false);
+    const [openAddTaskModal, setOpenAddTaskModal] = useState(false);
     const open = Boolean(anchorEl);
     const [searchParams] = useSearchParams();
     const name = searchParams.get('name');
     const userIdParams = searchParams.get('userId');
-    const [userId, setUserId] = useState(null)
+    const [userId, setUserId] = useState<string | null>(null)
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -67,14 +69,14 @@ export const KanbanPage = () => {
                         />
                     )}
                     size={'small'}
-                    onInputChange={(event: never, newValue: string | null) => {
-                        setEventName(newValue);
-                        console.log(newValue)
+                    onChange={(event: never, newValue: EventData) => {
+                        setEventName(newValue.name);
+                        setEventId(newValue.id);
                     }}
-                    options={events?.data?.data?.map(event => event.name) ?? []}
+                    options={events?.data?.data ?? []}
                     sx={{width: '350px'}}
-                    /*getOptionLabel={(option: EventData) => option?.name}*/
-                    value={eventName}
+                    getOptionLabel={(option: EventData) => option?.name}
+                    value={events?.data?.data?.filter(event => event.name === eventName)?.[0]}
                 />
                 <Divider orientation="vertical" variant="fullWidth" flexItem
                          sx={{borderWidth: '1px', borderColor: '#1FD4E9'}}/>
@@ -111,7 +113,7 @@ export const KanbanPage = () => {
                 <Column tasks={tasks?.data?.filter((task: TaskData) => task.status === 'closed')}
                         title={'Выполнена'} titleColor={'#01AF2D'} color={'#34C759'}/>
             </Box>
-            <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal}/>
+            {eventId && <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal} eventId={eventId}/>}
         </Box>
     )
 }

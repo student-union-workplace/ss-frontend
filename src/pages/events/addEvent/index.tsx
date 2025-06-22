@@ -2,7 +2,7 @@ import {Box, CircularProgress, Divider, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
 import {EventData, EventFormValues} from "../../../types/events";
 import {ADD_EVENT_INITIAL_VALUE} from "./constants.ts";
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
 import {AutocompleteInput} from "../../../components/controls/AutocompleteInput.tsx";
 import {TextInput} from "../../../components/controls/TextInput.tsx";
 import {CustomControl} from "../../../components/controls/CustomControl";
@@ -16,10 +16,12 @@ import {EventsApi} from "../../../api/events";
 import {useNavigate} from "react-router-dom";
 import {RoutesName} from "../../../enums/routes";
 import {ThemesApi} from "../../../api/themes";
+import {ErrorSnackbar} from "../../../components/snackbars/ErrorSnackbar.tsx";
 
 export const AddEvent = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
     const {control, handleSubmit} = useForm<EventFormValues>({
         defaultValues: ADD_EVENT_INITIAL_VALUE,
     });
@@ -40,9 +42,10 @@ export const AddEvent = () => {
     const lastEventOptions = useMemo(() => {
         if (events?.data?.data) {
             return events.data.data.map((event: EventData) => ({
-                label: event.name, value: event.id
+                label: event.name ?? '', value: event.id
             }))
         }
+        return [];
     }, [events])
 
     const themeOptions = useMemo(() => {
@@ -61,12 +64,12 @@ export const AddEvent = () => {
     const createHandler = async (values: EventFormValues) => {
         try {
             const response = await createMutation.mutateAsync({
-                name: values.name,
+                name: values.name.length ? values.name : null ,
                 date: values.date,
-                locations: values.locations.map(location => location.id),
+                locations: values.locations.length ? values.locations.map(location => location.id) : null,
                 managers: values.managers.map(user => user.id),
                 users: values.users.map(user => user.id),
-                past_event_id: values.past_event_id,
+                past_event_id: values.past_event_id.length ? values.past_event_id : null,
                 description: values.description,
                 is_archived: values.is_archived,
                 theme_id: values.theme_id
@@ -76,13 +79,19 @@ export const AddEvent = () => {
 
             if (response.status === 201) {
                 navigate(RoutesName.Events)
+            } else {
+                setOpenErrorSnackbar(true);
             }
+
         } catch (error) {
+            console.log('11111');
             console.log(error);
+
+
         }
     };
 
-    const isLoading = isLoadingEvents
+    const isLoading = isLoadingEvents;
 
     return (
         <Box className={'content'}>
@@ -144,6 +153,7 @@ export const AddEvent = () => {
                 </Box>
 
             </form>}
+            <ErrorSnackbar open={openErrorSnackbar} setOpen={setOpenErrorSnackbar} message={'Данные введены неверно'} />
         </Box>
     )
 }
