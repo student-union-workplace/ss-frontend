@@ -17,7 +17,7 @@ export const ErrorSnackbar = ({setOpen, open, message}: ErrorSnackbarProps) => {
             <Alert
                 onClose={handleClose}
                 severity="error"
-                variant="outlined"
+                variant="filled"
                 sx={{width: '100%'}}
             >
                 {message}

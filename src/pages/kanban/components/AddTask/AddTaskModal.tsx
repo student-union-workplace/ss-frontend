@@ -31,9 +31,10 @@ type AddTaskModalProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
     task?: TaskData,
+    eventId?: string
 }
 
-export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
+export const AddTaskModal = ({open, setOpen, task, eventId}: AddTaskModalProps) => {
     const queryClient = useQueryClient();
     const handleClose = () => {
         setOpen(false)
@@ -76,7 +77,7 @@ export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
                         deadline: values.deadline,
                         description: values.description,
                         status: values.status,
-                        user_id: values.user_id
+                        user_id: values.user_id,
                     }
                 });
 
@@ -89,7 +90,8 @@ export const AddTaskModal = ({open, setOpen, task}: AddTaskModalProps) => {
                     deadline: values.deadline,
                     description: values.description,
                     status: values.status,
-                    user_id: values.user_id
+                    user_id: values.user_id,
+                    event_id: eventId
                 });
 
                 if (response.status === 201) {
