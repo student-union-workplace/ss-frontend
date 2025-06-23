@@ -33,4 +33,18 @@ export class FilesApi {
         return instance.patch(`/google-sheets/${body.id}`, {name: body.name});
     }
 
+    // Other files
+    static addInfoOtherFile(body: {eventId: string, file: File}) {
+        return instance.post(`/files/events/${body.eventId}/files/upload-url`, {
+            name: body.file.name,
+            type: body.file.type,
+            size: body.file.size,
+            }
+        );
+    }
+
+    static addOtherFile(body: {uploadUrl: string, file: File}) {
+        return instance.put(`${body.uploadUrl}`, body.file);
+    }
+
 }

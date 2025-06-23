@@ -50,9 +50,16 @@ export const OtherDocument = ({doc}: OtherDocumentProps) => {
                 }}>{doc.name}</Typography>
             </Box>
             <Box sx={{display: 'flex', flexDirection: 'row'}}>
-                <IconButton color={'primary'}>
-                    <FileDownloadIcon/>
-                </IconButton>
+                <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <IconButton color={'primary'}>
+                        <FileDownloadIcon/>
+                    </IconButton>
+                </a>
+
                 <IconButton color={'primary'} onClick={(e) => deleteFileHandler(e)}>
                     <DeleteIcon/>
                 </IconButton>

@@ -4,6 +4,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import Autocomplete from "@mui/material/Autocomplete";
 import {useMutation, useQueryClient} from "react-query";
 import {FilesApi} from "../../../../api/files";
+import Button from "@mui/material/Button";
 
 type AddDocumentModalProps = {
     open: boolean;
@@ -30,6 +31,7 @@ const style = {
 export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps) => {
     const [typeDocument, setTypeDocument] = useState<{label: string, value: string} | null>(null);
     const [fileName, setFileName] = useState('');
+    const [uploadFile, setUploadFile] = useState<File>();
     const queryClient = useQueryClient();
 
     const handleClose = () => {
@@ -58,30 +60,67 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
         }
     });
 
-    const createFileHandler = async (e) => {
-        e.preventDefault();
-        try {
+    const createInfoOtherFileMutation = useMutation(FilesApi.addInfoOtherFile, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('file');
+        }
+    });
+
+    const createFileHandler = async () => {
+        /*e.preventDefault();*/
+
             if (typeDocument?.value === 'doc') {
-                await createGoogleDocMutation.mutateAsync({
-                    title: fileName,
-                    eventId: idEvent,
-                });
+                try {
+                    await createGoogleDocMutation.mutateAsync({
+                        title: fileName,
+                        eventId: idEvent,
+                    });
+                } catch (error) {
+                    console.log(error);
+                } finally {
+                     window.location.reload();
+                }
             }
 
-            if (typeDocument?.value === 'sheet') {
+        if (typeDocument?.value === 'sheet') {
+            try {
                 await createGoogleSheetMutation.mutateAsync({
                     title: fileName,
                     eventId: idEvent,
                 });
+            } catch (error) {
+                console.log(error);
+            } finally {
+                window.location.reload();
+            }
+        }
+
+
+            if (typeDocument?.value === 'other') {
+                await createInfoOtherFileMutation.mutateAsync({
+                    eventId: idEvent,
+                    file: uploadFile
+                }, {
+                    onSuccess: async response => {
+                        try {
+                            await fetch(response.data.uploadUrl, {
+                            method: 'PUT',
+                            body: uploadFile,
+                        });
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    }
+                })
             }
             setOpen(false);
-
-        } catch (error) {
-            console.log(error);
-        }
-        window.location.reload();
-        setOpen(false);
     }
+
+    const handleChangeBill = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event?.target?.files) {
+            setUploadFile(event?.target?.files[0]);
+        }
+    };
 
     return (
         <Modal
@@ -106,16 +145,38 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
                                 autoComplete='off'
                                 aria-autocomplete='none'
                                 sx={{fontSize: '16px'}}
+                                size={'small'}
                             />
                         )}
                         options={typesDocument}
                         value={typeDocument}
                         onChange={(event: never, newValue: string | null) => {
-                            console.log(event);
                             setTypeDocument(newValue);
                         }}
                     />
-                    <TextField label={'Название документа'} value={fileName} onChange={(event) => setFileName(event.target.value)}/>
+
+                    {typeDocument?.value === 'other' ? <>
+                        <input
+                            onChange={event => handleChangeBill(event)}
+                            type='file'
+                            id='uploadFile'
+                            style={{display: 'none', width: 0}}
+                            accept='.pdf, .xlsx'
+                        />
+                        <label htmlFor={'uploadFile'}>
+                            <Button
+                                startIcon={<i className='ri-file-add-line text=[28px]'></i>}
+                                component={'span'}
+                                variant={'outlined'}
+                                size={'small'}
+                            >
+                                Загрузить файл
+                            </Button>
+                        </label>
+                    </> : <TextField label={'Название документа'} value={fileName} size={'small'}
+                                     onChange={(event) => setFileName(event.target.value)}/>}
+
+                    <Typography>{uploadFile?.name}</Typography>
                 </Box>
                 <IconButton color={'primary'} onClick={(e) => createFileHandler(e)}>
                     <CheckCircleOutlineIcon/>
