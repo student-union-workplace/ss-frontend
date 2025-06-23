@@ -4,7 +4,7 @@ import {useForm} from "react-hook-form";
 import {CustomControl} from "../../../../components/controls/CustomControl";
 import {DateControl} from "./DateControl.tsx";
 import Button from "@mui/material/Button";
-import {useEffect, useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import { ActivityFormValues} from "../../../../types/activities";
 import {ADD_ACTIVITY_INITIAL_VALUE} from "./constants.ts";
@@ -16,6 +16,7 @@ import {ActivitiesApi} from "../../../../api/activities";
 import {UserData} from "../../../../types/users";
 import {Role} from "../../../../enums/roles";
 import {DecodedJwt} from "../../../../utils/jwt/DecodedJwt.tsx";
+import {ErrorSnackbar} from "../../../../components/snackbars/ErrorSnackbar.tsx";
 
 const style = {
     position: 'absolute',
@@ -42,11 +43,11 @@ type AddActivityModal = {
 export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) => {
     const queryClient = useQueryClient();
     const role = DecodedJwt()?.role;
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
 
     if (role === Role.Old) {
         setOpen(false)
     }
-
 
     const handleClose = () => {
         setOpen(false)
@@ -112,7 +113,7 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                     id: idActivity,
                     data: {
                         name: values.name,
-                        description: values.description,
+                        description: values.description?.length ? values.description : null,
                         date: values.date,
                         users: values.users.map((user: UserData) => user.id),
                         location_id: values.location_id,
@@ -122,12 +123,14 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                 if (response.status === 200) {
                     reset({})
                     setOpen(false)
+                } else {
+                    setOpenErrorSnackbar(true);
                 }
 
             } else {
                 const response = await createMutation.mutateAsync({
                     name: values.name,
-                    description: values.description,
+                    description: values.description?.length ? values.description : null,
                     date: values.date,
                     users: values.users?.map((user: UserData) => user.id),
                     location_id: values.location_id,
@@ -136,6 +139,8 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                 if (response.status === 201) {
                     reset({})
                     setOpen(false)
+                } else {
+                    setOpenErrorSnackbar(true);
                 }
 
             }
@@ -218,7 +223,8 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                     </Box>
 
                 </Box>
+                <ErrorSnackbar open={openErrorSnackbar} setOpen={setOpenErrorSnackbar} message={'Данные введены неверно'} />
             </form>}
-        </Modal>
+            </Modal>
     );
 }

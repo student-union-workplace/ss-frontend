@@ -28,9 +28,16 @@ export const NotificationItem = ({item, setAnchorEl }: NotificationItemProps) =>
             nav(RoutesName.Kanban)
             setOpenTaskModal(true)
             setTaskId(item.task_id)
-        } else {
+        }
+
+        if (item.type === 'event') {
             setAnchorEl(null)
             nav(`${RoutesName.Event}${item.event_id}`)
+        }
+
+        if (item.type === 'activity') {
+            setAnchorEl(null)
+            nav(`${RoutesName.Calendar}`)
         }
     }
 

@@ -37,8 +37,11 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
     };
 
     const handleDelete = (id: string) => {
-        value = value.filter((value) => value !== id)
+        console.log(id);
+        console.log(value);
+        value = value.filter((value) => value.id !== id)
         onChange(value)
+        console.log(value);
     }
 
     return (
