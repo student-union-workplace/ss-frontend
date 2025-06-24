@@ -27,7 +27,12 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
         }
 
         if (users?.data?.data) {
-            return users?.data?.data.filter((user: User) => value?.map((val) => val.id).indexOf(user.id) !== -1) ?? [];
+            return users?.data?.data
+                .filter((user: User) => value
+                    ?.map((val) => val.id)
+                    .indexOf(user.id) !== -1)
+                    .map(user => ({name: user.name, id: user.id}) )
+                ?? [];
         }
     }, [users, value]);
 
@@ -36,6 +41,12 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
             return;
         }
 
+        console.log(newValue.findIndex(user => user.id == 'all') !== -1)
+
+        if (newValue.findIndex(user => user.id == 'all') !== -1) {
+            onChange(users?.data?.data?.map(user => ({name: user.name, id: user.id})))
+            return;
+        }
 
         onChange(newValue);
     };
@@ -45,6 +56,8 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
         console.log(value)
         onChange(newValue)
     }
+
+    const teamOptions = [{name: 'Все', id: 'all'}, ...users?.data?.data?.map(user => ({name: user.name, id: user.id})) ?? []]
 
     return (
         usersValues && (
@@ -59,7 +72,7 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
                             onBlur={onBlur}
                         />
                     )}
-                    options={users?.data?.data ?? []}
+                    options={teamOptions ?? []}
                     value={usersValues}
                     size={'small'}
                     fullWidth
@@ -69,6 +82,7 @@ export const TeamControl = ({value, onChange, onBlur, label}: AutocompleteContro
                     noOptionsText={'Ничего не найдено'}
                     limitTags={0}
                     disableCloseOnSelect
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                 />
 
                 <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '0.5rem', maxHeight: '242px', overflowY: 'auto'}}>
