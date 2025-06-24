@@ -197,7 +197,9 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                         <Box sx={{
                             display: 'flex',
                             flexDirection: 'row',
-                            gap: '30px', width: '100%',
+                            gap: '30px',
+                            width: '100%',
+                            /*alignItems: 'center',*/
                         }}>
                             <Box sx={{width: '100%'}}>
                                 <CustomControl
@@ -207,11 +209,6 @@ export const AddActivityModal = ({open, setOpen, idActivity}: AddActivityModal) 
                                 />
                             </Box>
                             <Box sx={{width: '100%'}}>
-                                {/*<CustomControl
-                                    name={'location_id'}
-                                    control={control}
-                                    Component={PlaceControl}
-                                />*/}
                                 <AutocompleteInput name={'location_id'} label={'Место'} control={control}
                                                    options={placeOptions}/>
                             </Box>
