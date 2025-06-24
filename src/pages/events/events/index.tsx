@@ -36,7 +36,7 @@ export const Events = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [dateSort, setDateSort] = useState<'asc' | 'desc'>('desc');
-    const [isArchived, setIsArchived] = useState(null);
+    const [isArchived, setIsArchived] = useState(false);
     const [nameSearch, setNameSearch] = useState('');
     const nav = useNavigate();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
