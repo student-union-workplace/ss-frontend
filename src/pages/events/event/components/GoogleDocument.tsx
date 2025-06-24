@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {File} from "../../../../types/events";
 import {useMutation, useQueryClient} from "react-query";
 import {FilesApi} from "../../../../api/files";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { SaveOutlined} from "@mui/icons-material";
 
 type GoogleDocumentProps = {
@@ -14,7 +14,11 @@ type GoogleDocumentProps = {
 export const GoogleDocument = ({doc}: GoogleDocumentProps) => {
     const queryClient = useQueryClient();
     const [isEdit, setIsEdit] = useState(false);
-    const [title, setTitle] = useState(doc.name)
+    const [title, setTitle] = useState(doc.name);
+
+    useEffect(() => {
+        setIsEdit(false);
+    }, []);
 
     const deleteDocumentMutation = useMutation(FilesApi.deleteDocument, {
         onSuccess: () => {
@@ -43,6 +47,7 @@ export const GoogleDocument = ({doc}: GoogleDocumentProps) => {
         } catch (error) {
             console.log(error);
         }
+        setIsEdit(false);
     };
 
     const updateHandler = async (e) => {
