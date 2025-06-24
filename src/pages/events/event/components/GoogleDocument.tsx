@@ -18,7 +18,8 @@ export const GoogleDocument = ({doc}: GoogleDocumentProps) => {
 
     useEffect(() => {
         setIsEdit(false);
-    }, []);
+        setTitle(doc.name)
+    }, [doc]);
 
     const deleteDocumentMutation = useMutation(FilesApi.deleteDocument, {
         onSuccess: () => {
@@ -92,6 +93,8 @@ export const GoogleDocument = ({doc}: GoogleDocumentProps) => {
                     value={title}
                     size={'small'}
                     onChange={(e) => setTitle(e.target.value)}
+                    onBlur={() => setIsEdit(false)}
+                    autoFocus
                 /> : <Typography
                     sx={{
                         textDecoration: 'underline',

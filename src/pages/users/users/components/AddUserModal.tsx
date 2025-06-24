@@ -2,7 +2,7 @@ import {Box, Modal, Typography} from "@mui/material";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useForm} from "react-hook-form";
 import {AddUserFormValue, Department} from "../../../../types/users";
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
 import {Role} from "../../../../enums/roles";
 import {DepartmentsApi} from "../../../../api/departments";
 import {TextInput} from "../../../../components/controls/TextInput.tsx";
@@ -10,6 +10,7 @@ import {AutocompleteInput} from "../../../../components/controls/AutocompleteInp
 import {UsersApi} from "../../../../api/users";
 import Button from "@mui/material/Button";
 import {PasswordInput} from "../../../../components/controls/PasswordInput.tsx";
+import {ErrorSnackbar} from "../../../../components/snackbars/ErrorSnackbar.tsx";
 
 const style = {
     position: 'absolute',
@@ -31,6 +32,7 @@ type AddUserModalProps = {
 
 export const AddUserModal = ({open, setOpen}: AddUserModalProps) => {
     const queryClient = useQueryClient();
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
     const handleClose = () => {
         setOpen(false)
     }
@@ -51,7 +53,7 @@ export const AddUserModal = ({open, setOpen}: AddUserModalProps) => {
             {label: 'Член комиссии', value: Role.Member},
             {label: 'Песок', value: Role.Old},
             {label: 'Админ', value: Role.Admin},
-            {label: 'Заместитель', value: Role.Assistant}]
+            /*{label: 'Заместитель', value: Role.Assistant}*/]
     }, []);
 
     const createMutation = useMutation(UsersApi.create, {
@@ -73,9 +75,12 @@ export const AddUserModal = ({open, setOpen}: AddUserModalProps) => {
             if (response.status === 201) {
                 setOpen(false);
                 reset();
+            } else {
+                setOpenErrorSnackbar(true);
             }
         } catch (error) {
             console.log(error);
+            setOpenErrorSnackbar(true);
         }
     };
 
@@ -92,11 +97,14 @@ export const AddUserModal = ({open, setOpen}: AddUserModalProps) => {
                         <AutocompleteInput name={'department_id'} control={control} label={'Комиссия'}
                                            options={departmentsOptions}/>
                         <AutocompleteInput name={'role'} control={control} label={'Должность'} options={rolesOptions}/>
-                        <PasswordInput name={'password'} control={control} label={'Пароль'} />
+                        <PasswordInput name={'password'} control={control} label={'Пароль'} withShowPassword />
                         <Button size={'small'} type={'submit'} variant={'contained'}>Сохранить</Button>
                     </Box>
                 </form>
+                <ErrorSnackbar open={openErrorSnackbar} setOpen={setOpenErrorSnackbar} message={'Данные введены неверно'} />
+
             </Box>
+
         </Modal>
     )
 }

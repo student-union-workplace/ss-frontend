@@ -14,8 +14,14 @@ export const DateControl = ({value, onChange,onBlur }: AutocompleteControlProps)
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ru} >
             <DemoContainer components={['DateTimePicker']}>
-                <DateTimePicker value={value ? new Date(value) : null} onChange={onChange} slotProps={{textField: {size: 'small',  placeholder: 'ДД.ММ.ГГГГ ЧЧ:ММ' }}}
-                                ampm={false} format={'dd.MM.yyyy HH:mm'} onClose={onBlur} closeOnSelect={true} />
+                <DateTimePicker value={value ? new Date(value) : null}
+                                onChange={onChange}
+                                slotProps={{textField: {size: 'small',  placeholder: 'ДД.ММ.ГГГГ ЧЧ:ММ' }}}
+                                ampm={false}
+                                format={'dd.MM.yyyy HH:mm'}
+                                onClose={onBlur}
+                                closeOnSelect={true}
+                />
             </DemoContainer>
         </LocalizationProvider>
     );

@@ -123,6 +123,7 @@ export const Profile = () => {
                                     style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '70%'}}>
                         <TextInput name={'name'} control={control} label={'ФИО'}/>
                         <TextInput name={'phone_number'} control={control} label={'Тел'}/>
+                            <TextInput name={'email'} control={control} label={'Email'}/>
                         <TextInput name={'vk_link'} control={control} label={'ВК'}/>
                         <TextInput name={'tg_link'} control={control} label={'ТГ'}/>
                         <AutocompleteInput name={'department_id'} control={control} label={'Комиссия'}
@@ -143,6 +144,14 @@ export const Profile = () => {
                                 <Box sx={{display: 'flex', flexDirection: 'row', gap: '1rem'}}>
                                     <Typography color={'textSecondary'}>Тел </Typography>
                                     <Typography>{userData?.data?.phone_number ?? '-'}</Typography>
+                                </Box>
+                                <Divider orientation="horizontal" variant="fullWidth" flexItem
+                                         sx={{borderWidth: '0.5px', borderColor: '#1FD4E9', marginBlock: '0.5rem'}}/>
+                            </Box>
+                            <Box sx={{display: 'flex', flexDirection: 'column'}}>
+                                <Box sx={{display: 'flex', flexDirection: 'row', gap: '1rem'}}>
+                                    <Typography color={'textSecondary'}>Email </Typography>
+                                    <Typography>{userData?.data?.email ?? '-'}</Typography>
                                 </Box>
                                 <Divider orientation="horizontal" variant="fullWidth" flexItem
                                          sx={{borderWidth: '0.5px', borderColor: '#1FD4E9', marginBlock: '0.5rem'}}/>

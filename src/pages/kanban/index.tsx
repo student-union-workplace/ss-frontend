@@ -70,8 +70,8 @@ export const KanbanPage = () => {
                     )}
                     size={'small'}
                     onChange={(event: never, newValue: EventData) => {
-                        setEventName(newValue.name);
-                        setEventId(newValue.id);
+                        setEventName(newValue?.name ?? null);
+                        setEventId(newValue?.id ?? null);
                     }}
                     options={events?.data?.data ?? []}
                     sx={{width: '350px'}}
