@@ -184,7 +184,7 @@ export const Events = () => {
                                                 </Box>
                                             </TableCell>
                                             <TableCell><Typography
-                                                variant={'subtitle1'}>{themeOptions?.filter(theme => theme.value === row.theme_id)[0].label}</Typography></TableCell>
+                                                variant={'subtitle1'}>{themeOptions?.filter(theme => theme?.value === row?.theme_id)?.[0]?.label}</Typography></TableCell>
                                             <TableCell align={'left'}><Typography
                                                 variant={'subtitle1'}>{row?.date ? fns.format(row.date, 'd.LL.yyyy HH:mm', {locale: ru}) : '-'}</Typography></TableCell>
                                             <TableCell>

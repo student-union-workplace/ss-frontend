@@ -78,7 +78,7 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
                 } catch (error) {
                     console.log(error);
                 } finally {
-                     window.location.reload();
+                    window.location.reload();
                 }
             }
 
@@ -109,6 +109,8 @@ export const AddDocumentModal = ({setOpen, open, idEvent}: AddDocumentModalProps
                         });
                         } catch (error) {
                             console.log(error);
+                        } finally {
+                            window.location.reload();
                         }
                     }
                 })
